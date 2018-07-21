@@ -48,7 +48,6 @@ compile_commands.json
 CTestTestfile.cmake
 
 build/*
-test/*
 
 ### Linux ###
 *~
