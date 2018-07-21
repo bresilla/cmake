@@ -1,5 +1,11 @@
 {
-    "cmake.configureOnOpen": true,
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
-    "C_Cpp.configurationWarnings": "Disabled"
+  "cmake.configureOnOpen": true,
+  "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+  "C_Cpp.configurationWarnings": "Disabled",
+  "files.exclude": {
+    "__error": "Not found"
+  },
+  "files.associations": {
+    "array": "cpp"
+  }
 }

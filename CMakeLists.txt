@@ -4,8 +4,8 @@ project(UniBonn VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
