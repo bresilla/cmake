@@ -6,6 +6,8 @@
     "__error": "Not found"
   },
   "files.associations": {
-    "array": "cpp"
-  }
+    "array": "cpp",
+    "iostream": "cpp"
+  },
+  "gtest-adapter.debugConfig": "GDB"
 }
