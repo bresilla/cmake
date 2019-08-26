@@ -17,13 +17,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 link_directories(/usr/lib)
 
 # EIGEN
-find_package(Eigen3 REQUIRED)
-if(Eigen3_FOUND)
-    message ("Eigen3 FOUND")
-    target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})
-else()
-    message (FATAL_ERROR "Cannot find Eigen3")
-endif()
+# find_package(Eigen3 REQUIRED)
+# if(Eigen3_FOUND)
+    # message ("Eigen3 FOUND")
+    # target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})
+# else()
+    # message (FATAL_ERROR "Cannot find Eigen3")
+# endif()
 
 
 
