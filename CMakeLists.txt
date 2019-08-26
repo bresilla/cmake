@@ -1,7 +1,7 @@
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(PROJECT_NAME "CPPLATE")
+set(PROJECT_NAME "cplate")
 if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
