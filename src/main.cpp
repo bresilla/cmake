@@ -1,4 +1,3 @@
-#include "inc/player.h"
 #include "inc/Log.h"
 
 #define LOG(x) std::cout << x << std::endl
