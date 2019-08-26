@@ -32,3 +32,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     log
     ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
+
+
+###### INSTALL ######
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)

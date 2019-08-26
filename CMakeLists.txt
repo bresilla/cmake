@@ -1,36 +1,55 @@
-###### PROJECT NAME AND VERSION ######
-project(template)
+###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
+set(PROJECT_NAME "CPPLATE")
+if((NOT PROJECT_NAME))
+  message(FATAL_ERROR "Project name must be specified!")
+endif ((NOT PROJECT_NAME))
 
+###### GENERAL FLAGS ######
+project(${PROJECT_NAME} C CXX)
+message (STATUS "${CMAKE_PROJECT_NAME}")
+set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple CMAKE and CXX template")
+set(${CMAKE_PROJECT_NAME}_VENDOR_NAME           "Trim Bresilla")
+set(${CMAKE_PROJECT_NAME}_VENDOR_CONTACT        "trim.bresilla@gmail.com")
+set(${CMAKE_PROJECT_NAME}_VERSION_MAJOR         0)
+set(${CMAKE_PROJECT_NAME}_VERSION_MINOR         1)
+set(${CMAKE_PROJECT_NAME}_VERSION_PATCH         0)
+set(PROJECT_VERSION                             "${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}.${${CMAKE_PROJECT_NAME}_VERSION_MINOR}.${${CMAKE_PROJECT_NAME}_VERSION_PATCH}")
+set(PROJECT_PATH                               "${CMAKE_CURRENT_SOURCE_DIR}")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}     "${PROJECT_PATH}/cmake")
+set(INCLUDE_PATH                               "${PROJECT_PATH}/src")
+set(SRC_PATH                                   "${PROJECT_PATH}/src")
+set(TEST_SRC_PATH                              "${PROJECT_PATH}/test")
+set(EXTERNAL_PATH                              "${PROJECT_PATH}/thrd")
+set(DOXYGEN_PATH                               "${PROJECT_PATH}/docs")
+set(LIB_PATH                                   "${PROJECT_BINARY_DIR}/lib")
+set(LIB_NAME                                   "${PROJECT_NAME}")
+set(BIN_PATH                                   "${PROJECT_BINARY_DIR}/bin")
+set(MAIN_NAME                                  "${PROJECT_NAME}_main")
+set(TEST_PATH                                  "${PROJECT_BINARY_DIR}/test")
+set(TEST_NAME                                  "test_${PROJECT_NAME}")
+set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
+set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
 
+OPTION(BUILD_MAIN                              "Build main function"            ON)
+OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
+OPTION(BUILD_DEPENDENCIES                      "Force build of dependencies"    OFF)
 
-####### ENABLE TESTING ######
+####### ENABLE MODULES and TESTING ######
+include(Compiler)
+include(Buildtype)
+include(Warnings)
+include(Coverage)
+include(Packaging)
+include(Doxygen)
+# include(Conan)
+# include(LTO)
+
 include(CTest)
+include(GNUInstallDirs)
 enable_testing()
 
-
-
-###### COMPILER AND LANGUAGE OPTIONS ######
-#CPP STANDARD OPTIONS
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-# EXPORT COMPILE COMMANDS
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-
-
-###### CPACK PACKAGING SYSTEM ######
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
-
-
-
-###### STRUCTURE SETUP ######
-#BIN and LIB DUMP FOLDERS
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #SUBDIRECTORIES (they must have their own CMakeLists.txt)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
