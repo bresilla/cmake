@@ -1,5 +1,6 @@
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PROJECT_NAME "CPPLATE")
 if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
@@ -53,3 +54,4 @@ enable_testing()
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
+
