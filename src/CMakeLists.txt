@@ -14,7 +14,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 ###### EXTERNAL PACKAGES ######
 # LET LD SEARCH HERE (avoid, better use find_library())
-link_directories(/usr/lib)
+# link_directories(/usr/lib)
 
 # EIGEN
 # find_package(Eigen3 REQUIRED)
@@ -27,9 +27,14 @@ link_directories(/usr/lib)
 
 
 
+###### LINK OTHER LIBRARIES ######
+target_link_libraries(log fmt)
+
 ###### LAST LINK WITH EXECUTABLE ######
 target_link_libraries(${PROJECT_NAME} PRIVATE
     log
+    fmt
+    # spdlog
     ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
 

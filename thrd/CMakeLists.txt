@@ -1,5 +1,3 @@
-project(external C CXX)
-
 set(BUILD_TESTING_BCKP ${BUILD_TESTING})
 set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
 
