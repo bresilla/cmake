@@ -15,3 +15,6 @@ add_test(
    NAME ${TEST_BINARY}
    COMMAND ${EXECUTABLE_OUTPUT_PATH}/${TEST_BINARY}
 )
+
+
+# doctest_discover_tests(${TEST_BINARY} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test)
