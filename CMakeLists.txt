@@ -1,3 +1,11 @@
+###### HUNTER PACKAGE MANAGER ######
+include(cmake/Hunter.cmake)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.111.tar.gz"
+    SHA1 "4189bbd869abe4eb69b5303d3f916c03d34dc154"
+)
+
+
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -6,8 +14,9 @@ if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
 
+
 ###### GENERAL FLAGS ######
-project(${PROJECT_NAME} C CXX)
+project(${PROJECT_NAME})
 message (STATUS "${CMAKE_PROJECT_NAME}")
 set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple CMAKE and CXX template")
 set(${CMAKE_PROJECT_NAME}_VENDOR_NAME           "bresilla")
@@ -36,6 +45,7 @@ OPTION(BUILD_MAIN                              "Build main function"            
 OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
 OPTION(BUILD_DEPENDENCIES                      "Force build of dependencies"    OFF)
 
+
 ####### ENABLE MODULES and TESTING ######
 include(Compiler)
 include(Buildtype)
@@ -47,6 +57,7 @@ include(Doxygen)
 include(CTest)
 include(GNUInstallDirs)
 enable_testing()
+
 
 #SUBDIRECTORIES (they must have their own CMakeLists.txt)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)

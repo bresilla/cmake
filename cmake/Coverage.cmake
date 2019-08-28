@@ -1,4 +1,3 @@
-#
 # CMake module that detects if the compilers support coverage
 #
 # If this is the case, the build type Coverage is set up for coverage, and COVERAGE_SUPPORTED is set to true.
