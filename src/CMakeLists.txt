@@ -4,7 +4,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 
 ###### INTERNAL LIBRARIES ######
-add_library(log STATIC ${PROJECT_SOURCE_DIR}/src/inc/Log.cpp)
+add_library(classic STATIC ${PROJECT_SOURCE_DIR}/src/inc/classic.cpp)
 add_library(utl INTERFACE)
 target_sources(utl INTERFACE ${PROJECT_SOURCE_DIR}/src/inc/utl/utils.hpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
@@ -28,11 +28,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 
 ###### LINK OTHER LIBRARIES ######
-target_link_libraries(log fmt)
+target_link_libraries(classic
+    fmt
+    doctest)
 
 ###### LAST LINK WITH EXECUTABLE ######
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    log
+    classic
     fmt
     # spdlog
     ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
