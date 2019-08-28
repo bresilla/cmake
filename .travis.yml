@@ -31,8 +31,10 @@ install:
 
 script:
   - make
+  # - make test
 
 after_success:
   - cd $PARENTDIR/build
   - ctest
   - lcov --list coverage_out.info.cleaned
+  - bash <(curl -s https://codecov.io/bash)

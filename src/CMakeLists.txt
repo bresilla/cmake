@@ -5,11 +5,14 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 ###### INTERNAL LIBRARIES ######
 add_library(classic STATIC ${PROJECT_SOURCE_DIR}/src/inc/classic.cpp)
+
 add_library(utl INTERFACE)
 target_sources(utl INTERFACE ${PROJECT_SOURCE_DIR}/src/inc/utl/utils.hpp)
+
+#per target include
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
-
-
+#or all in src include
+include_directories(${PROJECT_SOURCE_DIR}/src})
 
 
 ###### EXTERNAL PACKAGES ######

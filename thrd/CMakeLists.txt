@@ -27,7 +27,4 @@ target_include_directories(
     doctest/doctest # note : will expose the parts/ folder...
 )
 target_compile_features(doctest INTERFACE cxx_std_11)
-set(BUILD_TESTING ${BUILD_TESTING_BCKP} CACHE BOOL "Build tests (default variable for CTest)" FORCE) #Set it back to its past value
-
-
-
+include_directories(${DOCTEST_INCLUDE_DIR})
