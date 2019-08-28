@@ -1,3 +1,4 @@
+include(CPack)
 ###### CPACK PACKAGING SYSTEM ######
 # Set up packager.
 set(CPACK_PROJECT_NAME                  ${PROJECT_NAME})
@@ -12,4 +13,3 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY     "${CMAKE_PROJECT_NAME}")
 set(CPACK_MONOLITHIC_INSTALL            1)
 
 
-include(CPack)

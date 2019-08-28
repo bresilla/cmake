@@ -1,12 +1,12 @@
 [
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/src",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused -fprofile-arcs -ftest-coverage -O3   -std=c++14 -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused -fprofile-arcs -ftest-coverage -O3   -std=c++14 -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/src",
-  "command": "/usr/bin/c++   -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused -fprofile-arcs -ftest-coverage -O3   -std=c++14 -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused -fprofile-arcs -ftest-coverage -O3   -std=c++14 -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp"
 },
 {
