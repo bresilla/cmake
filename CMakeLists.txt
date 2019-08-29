@@ -41,6 +41,7 @@ set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
 
 OPTION(BUILD_MAIN                              "Build main function"            ON)
 OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
+OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
 OPTION(BUILD_DEPENDENCIES                      "Force build of dependencies"    OFF)
 
 
@@ -52,10 +53,6 @@ include(Coverage)
 include(Packaging)
 include(CppCheck)
 
-if(BUILD_DOXYGEN_DOCS)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/docs)
-endif()
-
 include(CTest)
 include(GNUInstallDirs)
 enable_testing()
@@ -64,5 +61,6 @@ enable_testing()
 #SUBDIRECTORIES (they must have their own CMakeLists.txt)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+add_subdirectory(${PROJECT_SOURCE_DIR}/docs)
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 
