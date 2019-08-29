@@ -5,7 +5,6 @@ HunterGate(
     SHA1 "4189bbd869abe4eb69b5303d3f916c03d34dc154"
 )
 
-
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -13,7 +12,6 @@ set(PROJECT_NAME "cplate")
 if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
-
 
 ###### GENERAL FLAGS ######
 project(${PROJECT_NAME})
@@ -52,7 +50,11 @@ include(Buildtype)
 include(Warnings)
 include(Coverage)
 include(Packaging)
-include(Doxygen)
+include(CppCheck)
+
+if(BUILD_DOXYGEN_DOCS)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/docs)
+endif()
 
 include(CTest)
 include(GNUInstallDirs)

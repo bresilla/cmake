@@ -1,6 +1,8 @@
+#######################################################################
+#                   SOURCE CMAKE
+#######################################################################
 ###### ADD THE MAIN FILE as EXECUTABLE ######
 add_executable(${PROJECT_NAME} main.cpp)
-
 
 
 ###### INTERNAL LIBRARIES ######
