@@ -14,6 +14,11 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - lcov
+            - libcurl4-openssl-dev
+            - libelf-dev
+            - libdw-dev
+            - binutils-dev
+            - libiberty-dev
             - g++-7
             - doxygen
       env:
