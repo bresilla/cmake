@@ -83,7 +83,7 @@ if(cmake_build_type_tolower STREQUAL "debug")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
     include(CTest)
-    include(Coverage)
+    find_package(codecov)
 endif()
 
 

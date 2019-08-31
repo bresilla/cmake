@@ -31,6 +31,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src})
 # endif()
 
 
+add_coverage(${PROJECT_NAME})
 
 ###### LINK OTHER LIBRARIES ######
 target_link_libraries(classic
