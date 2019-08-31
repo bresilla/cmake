@@ -3,6 +3,10 @@
 #######################################################################
 ###### ADD THE MAIN FILE as EXECUTABLE ######
 add_executable(${PROJECT_NAME} main.cpp)
+#enable coverage if debugged
+if(DEBUGGING)
+    add_coverage(${PROJECT_NAME})
+endif()
 
 
 ###### INTERNAL LIBRARIES ######
@@ -30,8 +34,6 @@ include_directories(${PROJECT_SOURCE_DIR}/src})
     # message (FATAL_ERROR "Cannot find Eigen3")
 # endif()
 
-
-add_coverage(${PROJECT_NAME})
 
 ###### LINK OTHER LIBRARIES ######
 target_link_libraries(classic

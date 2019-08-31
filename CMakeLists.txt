@@ -17,7 +17,6 @@ if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
 else()
     message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
-    message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
 endif ((NOT PROJECT_NAME))
 
 #CPP STANDARD OPTIONS
@@ -71,14 +70,23 @@ if(NOT cmake_build_type_tolower STREQUAL "debug" AND
     message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, RelWithDebInfo, and MinSizeRel (case-insensitive).")
 endif()
 
+if(cmake_build_type_tolower STREQUAL "debug")
+    OPTION(DEBUGGING  "check if it's in debug mode"  ON)
+else()
+    OPTION(DEBUGGING  "check if it's in debug mode"  OFF)
+endif()
+
+
+####### COMPILER ######
 include(Warnings)
-if(cmake_build_type_tolower STREQUAL "release")
+if(NOT DEBUGGING)
+    message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     include(LTO)
     include(Packaging)
-endif()
-if(cmake_build_type_tolower STREQUAL "debug")
+else()
+    message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
@@ -87,15 +95,12 @@ if(cmake_build_type_tolower STREQUAL "debug")
 endif()
 
 
-
 #SUBDIRECTORIES (they must have their own CMakeLists.txt)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 
-if(cmake_build_type_tolower STREQUAL "debug")
+if(DEBUGGING)
     enable_testing()
     add_subdirectory(${PROJECT_SOURCE_DIR}/test)
     add_subdirectory(${PROJECT_SOURCE_DIR}/docs)
 endif()
-
-
