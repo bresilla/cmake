@@ -35,6 +35,5 @@ script:
 
 after_success:
   - cd $PARENTDIR/build
-  # - lcov --list coverage_out.info.cleaned
-  - bash <(curl -s https://codecov.io/bash)
   - ctest
+  - bash <(curl -s https://codecov.io/bash)

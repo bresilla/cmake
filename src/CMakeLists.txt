@@ -40,6 +40,7 @@ target_link_libraries(classic
     fmt
     doctest)
 
+
 ###### LAST LINK WITH EXECUTABLE ######
 target_link_libraries(${PROJECT_NAME} PRIVATE
     classic

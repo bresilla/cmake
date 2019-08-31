@@ -21,6 +21,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_PATH}/.git")
     endif()
 endif()
 
+
 #Use fmtlib for formatting
 if(${PROJECT_PATH}/src/fmt)
     execute_process(COMMAND git submodule update --init -- thrd/fmt WORKING_DIRECTORY ${PROJECT_PATH})
