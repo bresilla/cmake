@@ -20,7 +20,7 @@ matrix:
         - MATRIX_EVAL="CXX_COMPILER=g++-7; sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90"
 
 before_install:
-  - wget https://github.com/SimonKagstrom/kcov/archive/v36.tar.gz && tar xzf v33.tar.gz && mkdir kcov-33/build && cd kcov-33/build && cmake .. && make && sudo make install
+  - wget https://github.com/SimonKagstrom/kcov/archive/v36.tar.gz && tar xzf v36.tar.gz && mkdir kcov-36/build && cd kcov-36/build && cmake .. && make && sudo make install
   - eval "${MATRIX_EVAL}"
   - PARENTDIR=$(pwd)
   - mkdir $PARENTDIR/build
