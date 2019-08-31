@@ -256,3 +256,33 @@ endfunction(add_coverage_target)
 # format (like gcov and lcov).
 find_package(Gcov)
 find_package(Lcov)
+
+add_custom_target(lcov
+     COMMAND lcov --no-external --capture --base-directory ${PROJECT_SOURCE_DIR} --directory ${PROJECT_BINARY_DIR} --output-file coverage.info --rc lcov_branch_coverage=1
+    COMMAND lcov --remove coverage.info 3rdparty/* src/*/test/* --base-directory ${PROJECT_SOURCE_DIR} --output-file coverage.info --rc lcov_branch_coverage=1¬
+    COMMAND genhtml coverage.info --output-directory html --demangle-cpp --rc genhtml_branch_coverage=1
+    COMMAND echo "HTML report generated in: " ${PROJECT_BINARY_DIR}/lcov/html
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/lcov)
+
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/kcov")
+
+function (add_kcov TARNAME)
+	if (ENABLE_COVERAGE)
+		foreach (TNAME ${ARGV})
+			add_kcov_target(${TNAME})
+		endforeach ()
+	endif ()
+endfunction(add_kcov)
+
+
+function (add_kcov_target TARNAME)
+	get_target_property(TSOURCES ${TNAME} SOURCES)
+    codecov_path_of_source(${FILE} FILE)
+	foreach (FILE ${TSOURCES})
+        add_custom_command(TARGET ${TARNAME}
+            POST_BUILD
+            COMMAND /usr/local/bin/kcov ${CMAKE_BINARY_DIR}/kcov ${FILE}
+        )
+	endforeach ()
+endfunction(add_kcov_target)

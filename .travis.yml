@@ -34,6 +34,7 @@ script:
   # - make test
 
 after_success:
+  - wget https://github.com/SimonKagstrom/kcov/archive/v36.tar.gz && tar xzf v33.tar.gz && mkdir kcov-33/build && cd kcov-33/build && cmake .. && make && sudo make install
   - cd $PARENTDIR/build
   - ctest
   - bash <(curl -s https://codecov.io/bash)

@@ -3,10 +3,10 @@
 #######################################################################
 ###### ADD THE MAIN FILE as EXECUTABLE ######
 add_executable(${PROJECT_NAME} main.cpp)
-#enable coverage if debugged
-# if(DEBUGGING)
-    # add_coverage(${PROJECT_NAME})
-# endif()
+# enable coverage if debugged
+if(DEBUGGING)
+    add_coverage(${PROJECT_NAME})
+endif()
 
 
 ###### INTERNAL LIBRARIES ######

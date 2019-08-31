@@ -3,29 +3,23 @@
 #######################################################################
 include(CTest)
 include(CMakeDependentOption)
-
-if (ENABLE_COVERAGE)
-    # file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/gcov)
-    add_custom_target(lcov
-        # COMMAND find ${PROJECT_BINARY_DIR} -type f -name *.gcno -exec gcov -pb {} '\;' > ${PROJECT_BINARY_DIR}/gcov/coverage.info
-        COMMAND lcov --no-external --capture --base-directory ${PROJECT_SOURCE_DIR} --directory ${PROJECT_BINARY_DIR} --output-file coverage.info --rc lcov_branch_coverage=1
-        COMMAND lcov --remove coverage.info 3rdparty/* src/*/test/* --base-directory ${PROJECT_SOURCE_DIR} --output-file coverage.info --rc lcov_branch_coverage=1
-        COMMAND genhtml coverage.info --output-directory html --demangle-cpp --rc genhtml_branch_coverage=1
-        COMMAND echo "HTML report generated in: " ${PROJECT_BINARY_DIR}/lcov/html
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/lcov)
-endif()
-
+include(${PROJECT_PATH}/thrd/doctest/scripts/cmake/doctest.cmake)
 
 set(BUILD_TESTING_BCKP ${BUILD_TESTING})
 set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
-set(CUSTOM_COVERAGE_EXCLUDE ${CUSTOM_COVERAGE_EXCLUDE} "external" PARENT_SCOPE) # Replaced in CTestCustom.cmake.in
 list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/thrd'") #exclude from coverage
 
+# function to automatically set up testing for specific file
+function (add_testing FILE)
+    set(NAME ${PROJECT_NAME}_${FILE})
+    set(PATH ${CMAKE_CURRENT_SOURCE_DIR}/${FILE}.cpp)
+    add_executable(${NAME} ${PATH})
+    target_link_libraries(${NAME} PRIVATE doctest)
+    add_coverage(${NAME})
+    add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
+    add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov ${PROJECT_BINARY_DIR}/kcov ${PROJECT_BINARY_DIR}/bin/${NAME})
+endfunction(add_testing)
 
-set(TEST_1 ${PROJECT_NAME}_test_one)
-add_executable(${TEST_1} test_one.cpp)
-target_link_libraries(${TEST_1} PRIVATE doctest)
-add_coverage(${TEST_1})
 
-include(${PROJECT_PATH}/thrd/doctest/scripts/cmake/doctest.cmake)
-doctest_discover_tests(${TEST_1})
+add_testing(test_one)
+add_testing(test_two)
