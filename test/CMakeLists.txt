@@ -3,6 +3,11 @@
 #######################################################################
 include(CTest)
 
+set(BUILD_TESTING_BCKP ${BUILD_TESTING})
+set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
+set(CUSTOM_COVERAGE_EXCLUDE ${CUSTOM_COVERAGE_EXCLUDE} "external" PARENT_SCOPE) # Replaced in CTestCustom.cmake.in
+
+
 set(TEST_BINARY ${PROJECT_NAME}_test)
 add_executable(${TEST_BINARY} test_one.cpp)
 

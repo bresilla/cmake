@@ -1,4 +1,5 @@
 include(CPack)
+include(GNUInstallDirs)
 ###### CPACK PACKAGING SYSTEM ######
 # Set up packager.
 set(CPACK_PROJECT_NAME                  ${PROJECT_NAME})
