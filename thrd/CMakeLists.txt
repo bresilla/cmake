@@ -1,8 +1,6 @@
 #######################################################################
 #                   THIRD PARTY LIB CMAKE
 #######################################################################
-find_package(Git REQUIRED)
-
 #simple method to find library by using find_library
 function (find_insys NAME)
     set(CALL "${NAME}_LIB")

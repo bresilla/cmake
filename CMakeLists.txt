@@ -52,10 +52,8 @@ OPTION(BUILD_MAIN                              "Build main function"            
 OPTION(BUILD_TESTS                             "Build test units"               ON)
 OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
 OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
-OPTION(BUILD_DEPENDENCIES                      "Force build of dependencies"    OFF)
 OPTION(ENABLE_COVERAGE                         "Enable teating coverage"        ON)
 OPTION(CPPCHECK_ENABLE                         "Enable cpp checking"            ON)
-
 
 ####### BUILD TYPE #######
 if(NOT CMAKE_BUILD_TYPE)
@@ -98,7 +96,6 @@ endif()
 
 
 #SUBDIRECTORIES (they must have their own CMakeLists.txt)
-
 if(DEBUGGING)
     enable_testing()
     add_subdirectory(${PROJECT_SOURCE_DIR}/test)
@@ -108,25 +105,23 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
-
-##### WIP
+##### UPDATE GIT-SUBMODULES
+find_package(Git REQUIRED)
 if(GIT_FOUND AND EXISTS "${PROJECT_PATH}/.git")
-# Update submodules as needed
+    # Update submodules as needed
     option(GIT_SUBMODULE "Check submodules during build" ON)
     if(GIT_SUBMODULE)
         message(STATUS "Submodule update")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
         execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-                OUTPUT_VARIABLE PACKAGE_GIT_VERSION
-                ERROR_QUIET
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            OUTPUT_VARIABLE PACKAGE_GIT_VERSION
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
     endif()
 endif()
-
-

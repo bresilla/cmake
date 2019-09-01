@@ -7,26 +7,40 @@ file(MAKE_DIRECTORY "${INCLUDE_PATH}")
 
 file(GLOB HEAD_FILES "inc/*.h" "inc/*.hpp")
 file(GLOB CODE_FILES "inc/*.c" "inc/*.cpp")
-file(GLOB SINGLE_FILES "inc/*.hpp")
+file(GLOB SINGLE_FILES "sgl/*.hpp")
 
 
 ###### INTERNAL LIBRARIES ######
 #function to add internal libs and copy headers
 function (add_filelib FILE)
-    set(CODE ${PROJECT_SOURCE_DIR}/src/inc/${FILE}.cpp)
-    set(HEAD ${PROJECT_SOURCE_DIR}/src/inc/${FILE}.h)
-    add_library(${FILE} STATIC ${CODE})
+    get_filename_component(NAME ${FILE} NAME_WE)
+    get_filename_component(PATH ${FILE} DIRECTORY)
+    set(CODE ${PATH}/${NAME}.cpp)
+    set(HEAD ${PATH}/${NAME}.h)
+    add_library(${NAME} STATIC ${CODE})
     file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
 endfunction(add_filelib)
 #function to add header only internal libraries
 function (add_filehead FILE )
-    set(HEAD ${PROJECT_SOURCE_DIR}/src/sgl/${FILE}.hpp)
-    add_library(${FILE} INTERFACE)
-    target_sources(${FILE} INTERFACE ${HEAD})
+    get_filename_component(NAME ${FILE} NAME_WE)
+    get_filename_component(PATH ${FILE} DIRECTORY)
+    set(HEAD ${PATH}/${NAME}.h)
+    add_library(${NAME} INTERFACE)
+    target_sources(${NAME} INTERFACE ${HEAD})
 endfunction(add_filehead)
 
-add_filelib(classic)
-add_filehead(utils)
+#automatically add all libraries in /src
+foreach(A_FILE ${CODE_FILES})
+    # add_filelib(${PROJECT_PATH}/src/inc/classic.cpp)
+    add_filelib(${A_FILE})
+    message(STATUS "added library: ${A_FILE}")
+endforeach()
+#automatically add all header-onl-libraries in /sgl
+foreach(A_FILE ${SINGLE_FILES})
+    # add_filehead(${PROJECT_PATH}/src/sgl/utils.hpp)
+    add_filehead(${A_FILE})
+    message(STATUS "added header: ${A_FILE}")
+endforeach()
 
 
 ###### EXTERNAL PACKAGES ######
@@ -60,13 +74,15 @@ target_link_libraries(classic
 ###### LAST LINK WITH EXECUTABLE ######
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-        # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
-        # spdlog
+        classic
+    PUBLIC
         fmt
-        classic)
+        # spdlog
+        # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
+)
 
 
 ###### INSTALL ######
-# install(TARGETS ${PROJECT_NAME} DESTINATION "usr/local/bin")
-# install(TARGETS ${LIB_PATH} DESTINATION "usr/local/lib")
-# install(DIRECTORY "${INCLUDE_PATH}/" DESTINATION "usr/local/include")
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY "${LIB_PATH}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(DIRECTORY "${INCLUDE_PATH}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
