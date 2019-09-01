@@ -1,7 +1,7 @@
 #include "fmt/format.h"
 // #include "spdlog/spdlog.h"
 #include "inc/classic.h"
-#include "inc/utl/utils.hpp"
+#include "sgl/utils.hpp"
 
 int main() {
     std::string s = fmt::format("I'd rather be {1} than {0}.", "right", "happy");

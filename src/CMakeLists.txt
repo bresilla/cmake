@@ -3,22 +3,30 @@
 #######################################################################
 ###### ADD THE MAIN FILE as EXECUTABLE ######
 add_executable(${PROJECT_NAME} main.cpp)
-# enable coverage if debugged
-if(DEBUGGING)
-    add_coverage(${PROJECT_NAME})
-endif()
+file(MAKE_DIRECTORY "${INCLUDE_PATH}")
+
+file(GLOB HEAD_FILES "inc/*.h" "inc/*.hpp")
+file(GLOB CODE_FILES "inc/*.c" "inc/*.cpp")
+file(GLOB SINGLE_FILES "inc/*.hpp")
 
 
 ###### INTERNAL LIBRARIES ######
-add_library(classic STATIC ${PROJECT_SOURCE_DIR}/src/inc/classic.cpp)
+#function to add internal libs and copy headers
+function (add_filelib FILE)
+    set(CODE ${PROJECT_SOURCE_DIR}/src/inc/${FILE}.cpp)
+    set(HEAD ${PROJECT_SOURCE_DIR}/src/inc/${FILE}.h)
+    add_library(${FILE} STATIC ${CODE})
+    file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
+endfunction(add_filelib)
+#function to add header only internal libraries
+function (add_filehead FILE )
+    set(HEAD ${PROJECT_SOURCE_DIR}/src/sgl/${FILE}.hpp)
+    add_library(${FILE} INTERFACE)
+    target_sources(${FILE} INTERFACE ${HEAD})
+endfunction(add_filehead)
 
-add_library(utl INTERFACE)
-target_sources(utl INTERFACE ${PROJECT_SOURCE_DIR}/src/inc/utl/utils.hpp)
-
-#per target include
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
-#or all in src include
-include_directories(${PROJECT_SOURCE_DIR}/src})
+add_filelib(classic)
+add_filehead(utils)
 
 
 ###### EXTERNAL PACKAGES ######
@@ -35,20 +43,30 @@ include_directories(${PROJECT_SOURCE_DIR}/src})
 # endif()
 
 
+##### INCLUDE HEADERS
+#per target include
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
+#or all in src include
+include_directories(${PROJECT_SOURCE_DIR}/src})
+
+
 ###### LINK OTHER LIBRARIES ######
 target_link_libraries(classic
-    fmt
-    doctest)
+    PRIVATE
+        fmt
+        doctest)
 
 
 ###### LAST LINK WITH EXECUTABLE ######
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    classic
-    fmt
-    # spdlog
-    ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
-)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
+        # spdlog
+        fmt
+        classic)
 
 
 ###### INSTALL ######
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+# install(TARGETS ${PROJECT_NAME} DESTINATION "usr/local/bin")
+# install(TARGETS ${LIB_PATH} DESTINATION "usr/local/lib")
+# install(DIRECTORY "${INCLUDE_PATH}/" DESTINATION "usr/local/include")

@@ -266,23 +266,3 @@ add_custom_target(lcov
 
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/kcov")
-
-function (add_kcov TARNAME)
-	if (ENABLE_COVERAGE)
-		foreach (TNAME ${ARGV})
-			add_kcov_target(${TNAME})
-		endforeach ()
-	endif ()
-endfunction(add_kcov)
-
-
-function (add_kcov_target TARNAME)
-	get_target_property(TSOURCES ${TNAME} SOURCES)
-    codecov_path_of_source(${FILE} FILE)
-	foreach (FILE ${TSOURCES})
-        add_custom_command(TARGET ${TARNAME}
-            POST_BUILD
-            COMMAND /usr/local/bin/kcov ${CMAKE_BINARY_DIR}/kcov ${FILE}
-        )
-	endforeach ()
-endfunction(add_kcov_target)

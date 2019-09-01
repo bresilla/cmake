@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include "../src/inc/utl/utils.hpp"
+#include "../src/sgl/utils.hpp"
 
 
 TEST_CASE("testing the factorial function") {
