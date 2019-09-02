@@ -1,30 +1,17 @@
-#######################################################################
-#                   DOCS CMAKE
-#######################################################################
 ###### DOXYFILE ######
 if(BUILD_DOXYGEN_DOCS)
     find_package(Doxygen)
-    set(DOXYGEN_INPUT_DIR ${PROJECT_PATH}/src)
     set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/doxygen)
     set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
     set(DOXYFILE_IN ${PROJECT_PATH}/docs/Doxyfile.in)
     set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-    #create a "docs" command to use with: make read
-    set(DOC_TARGET_NAME "docs")
-
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
-    #if "docs" is used by top directory, then use docs_{PROJECT_NAME}
-    if(TARGET docs)
-        set(DOC_TARGET_NAME "docs${PROJECT_NAME}")
-    endif()
-
     add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
-                    DEPENDS ${CAT_CUTIFIER_PUBLIC_HEADERS}
                     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
                     MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
+                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                     COMMENT "Generating docs")
-    file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
-    add_custom_target(${DOC_TARGET_NAME} ALL DEPENDS ${DOXYGEN_INDEX_FILE})
+    add_custom_target(docs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
     install(DIRECTORY ${INSTALL_DOC_DIR} DESTINATION share/${PROJECT_NAME}-${VERSION_MAJOR} COMPONENT docs)
 endif()
 

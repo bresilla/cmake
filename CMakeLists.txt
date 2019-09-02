@@ -46,6 +46,7 @@ set(TEST_PATH                                  "${PROJECT_BINARY_DIR}/test")
 set(TEST_NAME                                  "test_${PROJECT_NAME}")
 set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
 set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
+set(DOXYGEN_INPUT_DIR                           ${PROJECT_PATH}/src)
 
 ######  FLAGS  ######
 OPTION(BUILD_MAIN                              "Build main function"            ON)
@@ -90,38 +91,35 @@ else()
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-    include(CTest)
-    find_package(codecov)
-endif()
-
-
-#SUBDIRECTORIES (they must have their own CMakeLists.txt)
-if(DEBUGGING)
-    enable_testing()
-    add_subdirectory(${PROJECT_SOURCE_DIR}/test)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/docs)
+    include(Docs)
 endif()
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
-##### UPDATE GIT-SUBMODULES
-find_package(Git REQUIRED)
-if(GIT_FOUND AND EXISTS "${PROJECT_PATH}/.git")
-    # Update submodules as needed
-    option(GIT_SUBMODULE "Check submodules during build" ON)
-    if(GIT_SUBMODULE)
-        message(STATUS "Submodule update")
-        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMOD_RESULT)
-        execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            OUTPUT_VARIABLE PACKAGE_GIT_VERSION
-            ERROR_QUIET
-            OUTPUT_STRIP_TRAILING_WHITESPACE)
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+#### TESGIN ############
+if(BUILD_TESTS AND DEBUGGING)
+    include(CTest)
+    enable_testing()
+    set(BUILD_TESTING_BCKP ${BUILD_TESTING})
+    set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/thrd'") #exclude from coverage
+    # function to automatically set up testing for specific file
+    function (add_testing PATH)
+        get_filename_component(NAME ${PATH} NAME_WE)
+        set(NAME ${PROJECT_NAME}_${NAME})
+        add_executable(${NAME} ${PATH})
+        target_link_libraries(${NAME} PRIVATE doctest)
+        add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
+        if(ENABLE_COVERAGE)
+            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
         endif()
+    endfunction(add_testing)
+    # find each test and apply testing
+    file(GLOB TEST_FILES "test/*.c" "test/*.cpp")
+    if(BUILD_TESTS)
+        foreach(A_FILE ${TEST_FILES})
+            add_testing(${A_FILE})
+        endforeach()
     endif()
 endif()

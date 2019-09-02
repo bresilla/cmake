@@ -1,17 +1,26 @@
 #######################################################################
 #                   THIRD PARTY LIB CMAKE
 #######################################################################
-#simple method to find library by using find_library
-function (find_insys NAME)
-    set(CALL "${NAME}_LIB")
-    find_library(${CALL} ${NAME} HINTS
-        # /usr/include /usr/local/include
-        /usr/lib /usr/local/lib)
-    add_library(${NAME} SHARED IMPORTED)
-    set_target_properties(${NAME} PROPERTIES LOCATION ${CALL})
-endfunction(find_insys)
-find_insys(ncurses)
-# CHECK_INCLUDE_FILE(ncurses NCU)
+##### UPDATE GIT-SUBMODULES
+find_package(Git REQUIRED)
+if(GIT_FOUND AND EXISTS "${PROJECT_PATH}/.git")
+    # Update submodules as needed
+    option(GIT_SUBMODULE "Check submodules during build" ON)
+    if(GIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            OUTPUT_VARIABLE PACKAGE_GIT_VERSION
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+    endif()
+endif()
 
 
 #Use fmtlib for formatting
