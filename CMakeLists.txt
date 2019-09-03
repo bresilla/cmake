@@ -48,6 +48,7 @@ set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
 set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
 set(DOXYGEN_INPUT_DIR                           ${PROJECT_PATH}/src)
 
+
 ######  FLAGS  ######
 OPTION(BUILD_MAIN                              "Build main function"            ON)
 OPTION(BUILD_TESTS                             "Build test units"               ON)
@@ -55,6 +56,7 @@ OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             
 OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
 OPTION(ENABLE_COVERAGE                         "Enable teating coverage"        ON)
 OPTION(CPPCHECK_ENABLE                         "Enable cpp checking"            ON)
+
 
 ####### BUILD TYPE #######
 if(NOT CMAKE_BUILD_TYPE)

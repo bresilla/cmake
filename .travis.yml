@@ -13,9 +13,12 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - lcov
-            - kcov
             - g++-7
+            - kcov
+            - cppcheck
+            - iwyu
+            - valgrind
+            - clang-tidy
             - doxygen
       env:
         - MATRIX_EVAL="CXX_COMPILER=g++-7; sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90"

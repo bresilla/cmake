@@ -19,6 +19,7 @@ function (add_filelib FILE)
     set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
     file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
+    add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
 endfunction(add_filelib)
 #function to add header only internal libraries
 function (add_filehead FILE )
