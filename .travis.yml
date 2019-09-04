@@ -28,7 +28,8 @@ before_install:
   - mkdir $PARENTDIR/build
 
 before_script:
-  - cd /tmp && git clone --recurse-submodules https://github.com/foonathan/standardese && cd standardese && mkdir build && cd build && cmake .. && make && cp tool/standardese /usr/local/bin
+  - etc/./standardese
+  # - cd /tmp && git clone --recurse-submodules https://github.com/foonathan/standardese && cd standardese && mkdir build && cd build && cmake .. && make && cp tool/standardese /usr/local/bin
 
 install:
   - cd $PARENTDIR/build
