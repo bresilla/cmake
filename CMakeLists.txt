@@ -9,7 +9,6 @@ HunterGate(
 )
 
 
-
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
@@ -19,7 +18,6 @@ if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
 message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
-
 
 
 ######  VARIABLES  ######
@@ -36,7 +34,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}     "${PROJECT_PATH}/cmake")
 set(SRC_PATH                                   "${PROJECT_PATH}/src")
 set(TEST_SRC_PATH                              "${PROJECT_PATH}/test")
 set(EXTERNAL_PATH                              "${PROJECT_PATH}/thrd")
-set(DOXYGEN_PATH                               "${PROJECT_PATH}/docs")
 set(LIB_PATH                                   "${PROJECT_BUILD}/lib")
 set(BIN_PATH                                   "${PROJECT_BUILD}/bin")
 set(INCLUDE_PATH                               "${PROJECT_BUILD}/include")
@@ -44,7 +41,6 @@ set(DOCS_PATH                                  "${PROJECT_BUILD}/docs")
 set(TEST_PATH                                  "${PROJECT_BUILD}/test")
 set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
 set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
-
 
 
 ####### BUILD TYPE #######
@@ -60,7 +56,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 
-
 ####### COMPILER ######
 include(Warnings)
 if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower STREQUAL "fastrelease"))
@@ -69,11 +64,9 @@ if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower ST
     include(LTO)
     include(Packaging)
     option(BUILD_MAIN                              "Build main function"            ON)
+    option(BUILD_TESTS                             "Build test units"               ON)
     if(cmake_build_type_tolower STREQUAL "release")
-        option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
-        option(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
-        include(Docs)
     endif()
 elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower STREQUAL "fastdebug"))
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
@@ -83,7 +76,6 @@ elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower 
     option(BUILD_TESTS                             "Build test units"               ON)
     option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
     if(cmake_build_type_tolower STREQUAL "debug")
-        option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
         option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
         option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
@@ -94,12 +86,10 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
-
 #CPP STANDARD OPTIONS
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 
 
 #### TESGIN ############
