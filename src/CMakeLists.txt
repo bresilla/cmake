@@ -19,6 +19,8 @@ function (add_filelib FILE)
     set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
     file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
+    add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+    # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
     add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
 endfunction(add_filelib)
 #function to add header only internal libraries
@@ -81,6 +83,13 @@ target_link_libraries(${PROJECT_NAME}
         # spdlog
         # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
+
+
+
+###### CHECKING EXECUTABLE FOR MEMORY LEAK ######
+if(BUILD_TESTS AND DEBUGGING)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_PATH}/${PROJECT_NAME})
+endif()
 
 
 ###### INSTALL ######

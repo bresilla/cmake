@@ -52,7 +52,7 @@ set(DOXYGEN_INPUT_DIR                           ${PROJECT_PATH}/src)
 ######  FLAGS  ######
 OPTION(BUILD_MAIN                              "Build main function"            ON)
 OPTION(BUILD_TESTS                             "Build test units"               ON)
-OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
+OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
 OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
 OPTION(ENABLE_COVERAGE                         "Enable teating coverage"        ON)
 OPTION(CPPCHECK_ENABLE                         "Enable cpp checking"            ON)

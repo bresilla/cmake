@@ -3,14 +3,12 @@
 // #include "fmt/format.h"
 
 class Log {
-    public:
-        enum Level{LevelError, LevelWarn, LevelInfo};
-    private:
-        Level m_logLevel = LevelInfo;
-    public:
+   public:
+    enum Level { LevelError, LevelWarn, LevelInfo };
 
+   private:
+    Level m_logLevel = LevelInfo;
 
-
-
-        void setLevel(Level level);
+   public:
+    void setLevel(Level level);
 };
