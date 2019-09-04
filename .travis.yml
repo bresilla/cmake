@@ -20,20 +20,19 @@ matrix:
             - valgrind
             - clang-tidy
             - libclang-dev
-            - libboost-dev
+            - libboost-all-dev
             - doxygen
       # env:
         # - MATRIX_EVAL="CXX_COMPILER=g++-7; sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 90"
 before_install:
-  - eval "${MATRIX_EVAL}"
   - PARENTDIR=$(pwd)
-  - mkdir $PARENTDIR/build
+  - cd /tmp && git clone --recurse-submodules https://github.com/foonathan/standardese && cd standardese && mkdir build && cd build && cmake .. && make && cp tool/standardese /usr/local/bin
+  - cd $PARENTDIR && mkdir $PARENTDIR/build
 
 # before_script:
   # - etc/./standardese
 
 install:
-  - cd /tmp && git clone --recurse-submodules https://github.com/foonathan/standardese && cd standardese && mkdir build && cd build && cmake .. && make && cp tool/standardese /usr/local/bin
   - cd $PARENTDIR/build
   - cmake $PARENTDIR -DCMAKE_BUILD_TYPE=Debug
   - make
