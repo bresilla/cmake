@@ -8,6 +8,8 @@ HunterGate(
     SHA1 "4189bbd869abe4eb69b5303d3f916c03d34dc154"
 )
 
+
+
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
@@ -15,14 +17,10 @@ set(PROJECT_NAME "cplate")
 project(${PROJECT_NAME})
 if((NOT PROJECT_NAME))
   message(FATAL_ERROR "Project name must be specified!")
-else()
-    message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
 endif ((NOT PROJECT_NAME))
+message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
 
-#CPP STANDARD OPTIONS
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 ######  VARIABLES  ######
 set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple CMAKE and CXX template")
@@ -39,25 +37,17 @@ set(SRC_PATH                                   "${PROJECT_PATH}/src")
 set(TEST_SRC_PATH                              "${PROJECT_PATH}/test")
 set(EXTERNAL_PATH                              "${PROJECT_PATH}/thrd")
 set(DOXYGEN_PATH                               "${PROJECT_PATH}/docs")
-set(LIB_PATH                                   "${PROJECT_BINARY_DIR}/lib")
-set(BIN_PATH                                   "${PROJECT_BINARY_DIR}/bin")
-set(INCLUDE_PATH                               "${PROJECT_BINARY_DIR}/include")
-set(DOCS_PATH                                  "${PROJECT_BINARY_DIR}/docs")
-set(TEST_PATH                                  "${PROJECT_BINARY_DIR}/test")
-set(TEST_NAME                                  "test_${PROJECT_NAME}")
+set(LIB_PATH                                   "${PROJECT_BUILD}/lib")
+set(BIN_PATH                                   "${PROJECT_BUILD}/bin")
+set(INCLUDE_PATH                               "${PROJECT_BUILD}/include")
+set(DOCS_PATH                                  "${PROJECT_BUILD}/docs")
+set(TEST_PATH                                  "${PROJECT_BUILD}/test")
 set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
 set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
-set(DOXYGEN_INPUT_DIR                           ${PROJECT_PATH}/src)
 
 
 
 ####### BUILD TYPE #######
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
-endif()
-if(${PROJECT_SOURCE_DIR} STREQUAL ${PROJECT_BINARY_DIR})
-    message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.")
-endif()
 string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
 if(NOT cmake_build_type_tolower STREQUAL "debug" AND
    NOT cmake_build_type_tolower STREQUAL "release" AND
@@ -65,41 +55,50 @@ if(NOT cmake_build_type_tolower STREQUAL "debug" AND
    NOT cmake_build_type_tolower STREQUAL "fastrelease")
     message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, FastDebug, and FastRelease (case-insensitive).")
 endif()
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
 
 
 
 ####### COMPILER ######
 include(Warnings)
 if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower STREQUAL "fastrelease"))
-    message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     include(LTO)
     include(Packaging)
-    include(Docs)
     option(BUILD_MAIN                              "Build main function"            ON)
     if(cmake_build_type_tolower STREQUAL "release")
         option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
         option(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
+        include(Docs)
     endif()
 elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower STREQUAL "fastdebug"))
-    message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
     option(BUILD_MAIN                              "Build main function"            ON)
     option(BUILD_TESTS                             "Build test units"               ON)
+    option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
     if(cmake_build_type_tolower STREQUAL "debug")
         option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
-        option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
         option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
         option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
     endif()
 endif()
+message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+
+
+
+#CPP STANDARD OPTIONS
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 
