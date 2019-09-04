@@ -2,7 +2,7 @@
 #include <iostream>
 // #include "fmt/format.h"
 
-class Log {
+class Logger {
 public:
     enum Level { LevelError,
                  LevelWarn,
@@ -12,5 +12,5 @@ private:
     Level m_logLevel = LevelInfo;
 
 public:
-    void setLevel( Level level );
+    void leveler( Level level );
 };

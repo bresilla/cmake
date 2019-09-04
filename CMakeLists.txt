@@ -42,6 +42,7 @@ set(DOXYGEN_PATH                               "${PROJECT_PATH}/docs")
 set(LIB_PATH                                   "${PROJECT_BINARY_DIR}/lib")
 set(BIN_PATH                                   "${PROJECT_BINARY_DIR}/bin")
 set(INCLUDE_PATH                               "${PROJECT_BINARY_DIR}/include")
+set(DOCS_PATH                                  "${PROJECT_BINARY_DIR}/docs")
 set(TEST_PATH                                  "${PROJECT_BINARY_DIR}/test")
 set(TEST_NAME                                  "test_${PROJECT_NAME}")
 set(EXECUTABLE_OUTPUT_PATH                      ${BIN_PATH})
@@ -54,7 +55,8 @@ OPTION(BUILD_MAIN                              "Build main function"            
 OPTION(BUILD_TESTS                             "Build test units"               ON)
 OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
 OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
-OPTION(ENABLE_COVERAGE                         "Enable teating coverage"        ON)
+OPTION(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
+OPTION(ENABLE_DOCUMENT                         "Enable documentation"           ON)
 OPTION(CPPCHECK_ENABLE                         "Enable cpp checking"            ON)
 
 

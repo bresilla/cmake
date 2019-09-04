@@ -92,6 +92,15 @@ if(BUILD_TESTS AND DEBUGGING)
 endif()
 
 
+
+#### DOCUMENTATION ######
+file(MAKE_DIRECTORY "${DOCS_PATH}")
+if(ENABLE_DOCUMENT)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND standardese --output-format=html --input.blacklist_file=CMakeLists.txt ${SRC_PATH} WORKING_DIRECTORY ${DOCS_PATH})
+endif()
+
+
+
 ###### INSTALL ######
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY "${LIB_PATH}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -1,11 +1,11 @@
 #pragma once
-#include <string>
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace utl {
-
-    int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
+    ///count the number of factorial
+    int factorial( int number ) { return number <= 1 ? number : factorial( number - 1 ) * number; }
 }

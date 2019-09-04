@@ -3,7 +3,7 @@ if(BUILD_DOXYGEN_DOCS)
     find_package(Doxygen)
     set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/doxygen)
     set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
-    set(DOXYFILE_IN ${PROJECT_PATH}/docs/Doxyfile.in)
+    set(DOXYFILE_IN ${PROJECT_PATH}/etc/Doxyfile.in)
     set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
     add_custom_command(OUTPUT ${DOXYGEN_INDEX_FILE}
