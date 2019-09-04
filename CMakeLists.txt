@@ -50,15 +50,6 @@ set(LIBRARY_OUTPUT_PATH                         ${LIB_PATH})
 set(DOXYGEN_INPUT_DIR                           ${PROJECT_PATH}/src)
 
 
-######  FLAGS  ######
-OPTION(BUILD_MAIN                              "Build main function"            ON)
-OPTION(BUILD_TESTS                             "Build test units"               ON)
-OPTION(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
-OPTION(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
-OPTION(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
-OPTION(ENABLE_DOCUMENT                         "Enable documentation"           ON)
-OPTION(CPPCHECK_ENABLE                         "Enable cpp checking"            ON)
-
 
 ####### BUILD TYPE #######
 if(NOT CMAKE_BUILD_TYPE)
@@ -70,39 +61,50 @@ endif()
 string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
 if(NOT cmake_build_type_tolower STREQUAL "debug" AND
    NOT cmake_build_type_tolower STREQUAL "release" AND
-   NOT cmake_build_type_tolower STREQUAL "minsizerel" AND
-   NOT cmake_build_type_tolower STREQUAL "relwithdebinfo")
-    message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, RelWithDebInfo, and MinSizeRel (case-insensitive).")
+   NOT cmake_build_type_tolower STREQUAL "fastdebug" AND
+   NOT cmake_build_type_tolower STREQUAL "fastrelease")
+    message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, FastDebug, and FastRelease (case-insensitive).")
 endif()
 
-if(cmake_build_type_tolower STREQUAL "debug")
-    OPTION(DEBUGGING  "check if it's in debug mode"  ON)
-else()
-    OPTION(DEBUGGING  "check if it's in debug mode"  OFF)
-endif()
 
 
 ####### COMPILER ######
 include(Warnings)
-if(NOT DEBUGGING)
+if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower STREQUAL "fastrelease"))
     message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     include(LTO)
     include(Packaging)
-else()
+    include(Docs)
+    option(BUILD_MAIN                              "Build main function"            ON)
+    if(cmake_build_type_tolower STREQUAL "release")
+        option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             ON)
+        option(BUILD_SPHINX_DOCS                       "Build Doxygen docs with Sphinx" OFF)
+        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
+    endif()
+elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower STREQUAL "fastdebug"))
     message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-    include(Docs)
+    option(BUILD_MAIN                              "Build main function"            ON)
+    option(BUILD_TESTS                             "Build test units"               ON)
+    if(cmake_build_type_tolower STREQUAL "debug")
+        option(BUILD_DOXYGEN_DOCS                      "Build Doxygen docs"             OFF)
+        option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
+        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
+        option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
+        option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
+    endif()
 endif()
 add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
+
 #### TESGIN ############
-if(BUILD_TESTS AND DEBUGGING)
+if(BUILD_TESTS)
     include(CTest)
     enable_testing()
     set(BUILD_TESTING_BCKP ${BUILD_TESTING})

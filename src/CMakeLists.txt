@@ -19,9 +19,11 @@ function (add_filelib FILE)
     set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
     file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
-    add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
-    # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
-    add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
+    if(ENABLE_SANITIZERS)
+        add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
+        add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
+    endif()
 endfunction(add_filelib)
 #function to add header only internal libraries
 function (add_filehead FILE )
@@ -87,12 +89,9 @@ target_link_libraries(${PROJECT_NAME}
 
 
 ###### CHECKING EXECUTABLE FOR MEMORY LEAK ######
-if(BUILD_TESTS AND DEBUGGING)
+if(ENABLE_MEMCHECK)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_PATH}/${PROJECT_NAME})
 endif()
-
-
-
 #### DOCUMENTATION ######
 file(MAKE_DIRECTORY "${DOCS_PATH}")
 if(ENABLE_DOCUMENT)
