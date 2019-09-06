@@ -3,7 +3,7 @@
 #######################################################################
 ###### ADD THE MAIN FILE as EXECUTABLE ######
 add_executable(${PROJECT_NAME} main.cpp)
-file(MAKE_DIRECTORY "${INCLUDE_PATH}")
+file(MAKE_DIRECTORY "${INCLUDE_BUILD}")
 
 file(GLOB HEAD_FILES "inc/*.h" "inc/*.hpp")
 file(GLOB CODE_FILES "inc/*.c" "inc/*.cpp")
@@ -18,7 +18,7 @@ function (add_filelib FILE)
     set(CODE ${PATH}/${NAME}.cpp)
     set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
-    file(COPY "${HEAD}" DESTINATION "${INCLUDE_PATH}")
+    file(COPY "${HEAD}" DESTINATION "${INCLUDE_BUILD}")
     if(ENABLE_SANITIZERS)
         add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
         # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
@@ -90,17 +90,17 @@ target_link_libraries(${PROJECT_NAME}
 
 ###### CHECKING EXECUTABLE FOR MEMORY LEAK ######
 if(ENABLE_MEMCHECK)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_PATH}/${PROJECT_NAME})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_BUILD}/${PROJECT_NAME})
 endif()
 #### DOCUMENTATION ######
-file(MAKE_DIRECTORY "${DOCS_PATH}")
+file(MAKE_DIRECTORY "${DOCS_BUILD}")
 if(ENABLE_DOCUMENT)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND standardese --output-format=html --input.blacklist_file=CMakeLists.txt ${SRC_PATH} WORKING_DIRECTORY ${DOCS_PATH})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND standardese --output-format=html --input.blacklist_file=CMakeLists.txt ${MAIN_SRC} WORKING_DIRECTORY ${DOCS_BUILD})
 endif()
 
 
 
 ###### INSTALL ######
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY "${LIB_PATH}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY "${INCLUDE_PATH}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY "${LIB_BUILD}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(DIRECTORY "${INCLUDE_BUILD}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

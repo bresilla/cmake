@@ -7,3 +7,6 @@
 [submodule "thrd/doctest"]
 	path = thrd/doctest
 	url = https://github.com/onqtam/doctest.git
+[submodule "thrd/yaml-cpp"]
+	path = thrd/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
