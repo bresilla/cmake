@@ -4,8 +4,11 @@
 
 class Object {
 public:
+    ///width of the object
     int width;
+    /// heigh of the object
     int heigh;
+    /// depth of the object
     int depth;
 
 private:
