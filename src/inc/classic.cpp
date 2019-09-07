@@ -1,6 +1,9 @@
 #include "classic.h"
 
-/// set level of logs
-void Log::setLevel(Level level){
-    m_logLevel = level;
+void Square::setSurface( int a, int b ) {
+    this->surface = a * b;
+}
+
+int Square::getSurface() {
+    return this->surface;
 }

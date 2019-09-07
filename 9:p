@@ -1,0 +1,4 @@
+#include "classic.h"
+
+void Square::setSurface( int a, int b ) {
+}

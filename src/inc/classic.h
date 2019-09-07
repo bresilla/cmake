@@ -2,15 +2,15 @@
 #include <iostream>
 // #include "fmt/format.h"
 
-class Log {
+class Square {
 public:
-    enum Level { LevelError,
-                 LevelWarn,
-                 LevelInfo };
+    int width;
+    int heigh;
 
 private:
-    Level m_logLevel = LevelInfo;
+    int surface;
 
 public:
-    void setLevel( Level level );
+    void setSurface( int a, int b );
+    int getSurface();
 };
