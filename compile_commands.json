@@ -1,32 +1,32 @@
 [
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -std=c++14 -o CMakeFiles/cplate_test_one.dir/test/test_one.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/test/test_one.cpp",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -std=c++14 -o CMakeFiles/cplate_test_one.dir/test/test_one.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/test/test_one.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/test/test_one.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/thrd/fmt",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/format.cc",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/format.cc",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/format.cc"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/thrd/fmt",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/posix.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/posix.cc",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/posix.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/posix.cc",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/src/posix.cc"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/thrd/spdlog",
-  "command": "/usr/bin/c++  -DSPDLOG_COMPILED_LIB -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/spdlog/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -Wall -Wextra -Wconversion -pedantic -Wfatal-errors -std=c++11 -o CMakeFiles/spdlog.dir/src/spdlog.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/spdlog/src/spdlog.cpp",
+  "command": "/usr/bin/c++  -DSPDLOG_COMPILED_LIB -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/spdlog/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -Wall -Wextra -Wconversion -pedantic -Wfatal-errors -std=c++11 -o CMakeFiles/spdlog.dir/src/spdlog.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/spdlog/src/spdlog.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/spdlog/src/spdlog.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/src",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -std=gnu++11 -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -std=gnu++11 -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/main.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/build/src",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -std=gnu++11 -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp",
+  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/fmt/include -I/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/thrd/doctest/doctest   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage -O0 -g3   -std=gnu++11 -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/WORK/cmake/src/inc/classic.cpp"
 }
 ]
