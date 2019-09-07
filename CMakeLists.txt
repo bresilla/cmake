@@ -106,7 +106,7 @@ if(BUILD_TESTS)
         target_link_libraries(${NAME} PRIVATE doctest classic)
         add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
         if(ENABLE_COVERAGE)
-            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --coveralls-id=$TRAVIS_JOB_ID ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
+            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${MAIN_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
         endif()
     endfunction(add_testing)
     # find each test and apply testing
