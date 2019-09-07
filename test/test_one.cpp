@@ -10,8 +10,8 @@ TEST_CASE( "testing the factorial function" ) {
     CHECK( utl::factorial( 10 ) == 3628800 );
 }
 
-TEST_CASE( "testing square class" ) {
-    Square square;
-    square.setSurface( 5, 4 );
-    CHECK( square.getSurface() == 20 );
+TEST_CASE( "testing shape class" ) {
+    Object shape;
+    shape.setSurface( 5, 4 );
+    CHECK( shape.getSurface() == 20 );
 }
