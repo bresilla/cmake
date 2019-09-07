@@ -1,13 +1,13 @@
 #include "classic.h"
 /// calculate volume of the square
 /// based on the input `a` and `b` and `c`
-void Object::setVolume( int a, int b, int c ) {
+void Object::setVolume( const int a, const int b, const int c ) {
     this->volume = a * b * c;
 }
 
 /// calculate surface of the square
 /// based on the input `a` and `b`
-void Object::setSurface( int a, int b ) {
+void Object::setSurface( const int a, const int b ) {
     this->surface = a * b;
 }
 
