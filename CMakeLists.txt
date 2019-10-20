@@ -1,13 +1,12 @@
-#######################################################################
+##############################################################################################################################################
 #                 CMAKE
-#######################################################################
+##############################################################################################################################################
 ###### HUNTER PACKAGE MANAGER ######
-include(cmake/Hunter.cmake)
+include("cmake/HunterGate.cmake")
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.111.tar.gz"
-    SHA1 "4189bbd869abe4eb69b5303d3f916c03d34dc154"
+    URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
+    SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358"
 )
-
 
 ###### GENERAL SETTINGS ######
 cmake_minimum_required(VERSION 3.10)
@@ -72,16 +71,15 @@ elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower 
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
     option(BUILD_MAIN                              "Build main function"            ON)
-    option(BUILD_TESTS                             "Build test units"               ON)
-    option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
-    option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
     if(cmake_build_type_tolower STREQUAL "debug")
+        option(BUILD_TESTS                             "Build test units"               ON)
+        option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
+        option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
         # option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
     endif()
 endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
-add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
