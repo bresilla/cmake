@@ -7,13 +7,12 @@ file(MAKE_DIRECTORY "${INCLUDE_BUILD}")
 #                   THIRD PARTY PACKAGES
 ##############################################################################################################################################
 #Use fmtlib for formatting
-add_subdirectory(${THRD_SRC}/fmt  ${THRD_SRC}/fmt/build EXCLUDE_FROM_ALL)
+add_subdirectory(${THRD_SRC}/fmt ${THRD_SRC}/fmt  EXCLUDE_FROM_ALL)
 target_set_warnings(fmt DISABLE ALL) # Treat fmtlib as a system include as to ignore the warnings
-# Add new external (non-interface) targets to this list
 set_target_properties(fmt PROPERTIES FOLDER "external")
 
 #Use spdlog for logging, and tell it to use our version of fmtlib
-add_subdirectory(${THRD_SRC}/spdlog ${THRD_SRC}/spdlog/build EXCLUDE_FROM_ALL)
+add_subdirectory(${THRD_SRC}/spdlog ${THRD_SRC}/spdlog EXCLUDE_FROM_ALL)
 target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
@@ -25,8 +24,9 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
     # doctest/doctest # note : will expose the parts/ folder...
 # )
 # include_directories(${DOCTEST_INCLUDE_DIR})
-hunter_add_package(doctest)
-find_package(doctest REQUIRED)
+# hunter_add_package(doctest)
+# find_package(doctest CONFIG REQUIRED)
+# target_link_libraries(... doctest::doctest)
 
 
 ##############################################################################################################################################
@@ -56,10 +56,7 @@ function (add_filelib FILE)
     get_filename_component(NAME ${FILE} NAME_WE)
     get_filename_component(PATH ${FILE} DIRECTORY)
     set(CODE ${PATH}/${NAME}.cpp)
-    set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
-    list(APPEND INTERNAL_LIBS ${NAME})
-    file(COPY "${HEAD}" DESTINATION "${INCLUDE_BUILD}")
     if(ENABLE_SANITIZERS)
         add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
         # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
@@ -89,18 +86,17 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src) #pe
 include_directories(${PROJECT_SOURCE_DIR}/src}) #or all in src include
 
 ##############################################################################################################################################
-#                   SOURCE
+#                   MAIN
 ##############################################################################################################################################
 if(BUILD_MAIN)
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
             classic
         PUBLIC
-            fmt
+            fmt::fmt-header-only
             # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
     )
 endif()
-
 ##############################################################################################################################################
 #                   TESTS
 ###############################################################################################################################################

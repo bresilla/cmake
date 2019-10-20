@@ -1,11 +1,16 @@
 with import <nixpkgs> {}; rec {
-  boomerEnv = stdenv.mkDerivation {
-    name = "libcli";
+  cplateEnv = stdenv.mkDerivation {
+    name = "cmake";
     buildInputs = [ stdenv
                     cmake
                     ncurses
                     gcc
                     clang
+                    clang-tools
+                    ctags
+                    cppcheck
+                    lcov
+                    llvmPackages.libclang
                     gdb
                     pkgconfig
                     xorg.libX11
