@@ -1,27 +1,27 @@
 [
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/build/src",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -std=gnu++11 -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/inc/classic.cpp",
+  "command": "/usr/sbin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src} -isystem /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -o CMakeFiles/classic.dir/inc/classic.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/inc/classic.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/inc/classic.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/build/src",
-  "command": "/usr/bin/c++  -DFMT_HEADER_ONLY=1 -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src} -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -std=gnu++11 -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/main.cpp",
+  "command": "/usr/sbin/c++  -DFMT_HEADER_ONLY=1 -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src} -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -o CMakeFiles/cplate.dir/main.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/main.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/src/main.cpp"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/format.cc",
+  "command": "/usr/sbin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/format.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/format.cc",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/format.cc"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt",
-  "command": "/usr/bin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/posix.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/posix.cc",
+  "command": "/usr/sbin/c++   -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -w -std=gnu++11 -o CMakeFiles/fmt.dir/src/posix.cc.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/posix.cc",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/fmt/src/posix.cc"
 },
 {
   "directory": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog",
-  "command": "/usr/bin/c++  -DSPDLOG_COMPILED_LIB -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -Wall -Wextra -Wconversion -pedantic -Wfatal-errors -std=c++11 -o CMakeFiles/spdlog.dir/src/spdlog.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog/src/spdlog.cpp",
+  "command": "/usr/sbin/c++  -DSPDLOG_COMPILED_LIB -I/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog/include   -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused --coverage -fprofile-arcs -ftest-coverage   -Wall -Wextra -Wconversion -pedantic -Wfatal-errors -std=c++11 -o CMakeFiles/spdlog.dir/src/spdlog.cpp.o -c /home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog/src/spdlog.cpp",
   "file": "/home/bresilla/DATA/CODE/PROJECTS/CPLATE/thrd/spdlog/src/spdlog.cpp"
 }
 ]
