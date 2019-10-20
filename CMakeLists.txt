@@ -89,31 +89,3 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-
-#### TESGIN ############
-if(BUILD_TESTS)
-    include(CTest)
-    enable_testing()
-    set(BUILD_TESTING_BCKP ${BUILD_TESTING})
-    set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
-    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/thrd'") #exclude from coverage
-    # function to automatically set up testing for specific file
-    function (add_testing PATH)
-        get_filename_component(NAME ${PATH} NAME_WE)
-        set(NAME ${PROJECT_NAME}_${NAME})
-        add_executable(${NAME} ${PATH})
-        target_link_libraries(${NAME} PRIVATE doctest classic)
-        add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
-        if(ENABLE_COVERAGE)
-            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${MAIN_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
-        endif()
-    endfunction(add_testing)
-    # find each test and apply testing
-    file(GLOB TEST_FILES "test/*.c" "test/*.cpp")
-    if(BUILD_TESTS)
-        foreach(A_FILE ${TEST_FILES})
-            add_testing(${A_FILE})
-        endforeach()
-    endif()
-endif()

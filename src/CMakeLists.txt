@@ -18,6 +18,7 @@ function (add_filelib FILE)
     set(CODE ${PATH}/${NAME}.cpp)
     set(HEAD ${PATH}/${NAME}.h)
     add_library(${NAME} STATIC ${CODE})
+    list(APPEND INTERNAL_LIBS ${NAME})
     file(COPY "${HEAD}" DESTINATION "${INCLUDE_BUILD}")
     if(ENABLE_SANITIZERS)
         add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
@@ -29,7 +30,7 @@ endfunction(add_filelib)
 function (add_filehead FILE )
     get_filename_component(NAME ${FILE} NAME_WE)
     get_filename_component(PATH ${FILE} DIRECTORY)
-    set(HEAD ${PATH}/${NAME}.h)
+    set(HEAD ${PATH}/${NAME}.hpp)
     add_library(${NAME} INTERFACE)
     target_sources(${NAME} INTERFACE ${HEAD})
 endfunction(add_filehead)
@@ -77,21 +78,49 @@ target_link_libraries(classic
 
 
 ###### LAST LINK WITH EXECUTABLE ######
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-        classic
-    PUBLIC
-        fmt
-        # spdlog
-        # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
-)
+if(BUILD_MAIN)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+            classic
+        PUBLIC
+            fmt
+            # spdlog
+            # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
+    )
+endif()
 
 
+#### TESGIN ############
+if(BUILD_TESTS)
+    include(CTest)
+    enable_testing()
+    set(BUILD_TESTING_BCKP ${BUILD_TESTING})
+    set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
+    # function to automatically set up testing for specific file
+    function (add_testing PATH)
+        get_filename_component(NAME ${PATH} NAME_WE)
+        set(NAME ${PROJECT_NAME}_${NAME})
+        add_executable(${NAME} ${PATH})
+        target_link_libraries(${NAME} PRIVATE doctest classic)
+        add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
+        if(ENABLE_COVERAGE)
+            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${MAIN_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
+        endif()
+    endfunction(add_testing)
+    # find each test and apply testing
+    file(GLOB TEST_FILES "../test/*.c" "../test/*.cpp")
+    if(BUILD_TESTS)
+        foreach(A_FILE ${TEST_FILES})
+            add_testing(${A_FILE})
+        endforeach()
+    endif()
+endif()
 
 ###### CHECKING EXECUTABLE FOR MEMORY LEAK ######
 if(ENABLE_MEMCHECK)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_BUILD}/${PROJECT_NAME})
 endif()
+
 #### DOCUMENTATION ######
 file(MAKE_DIRECTORY "${DOCS_BUILD}")
 if(ENABLE_DOCUMENT)
