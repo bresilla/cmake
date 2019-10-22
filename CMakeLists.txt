@@ -62,7 +62,6 @@ if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower ST
     include(LTO)
     include(Packaging)
     option(BUILD_MAIN                              "Build main function"            ON)
-    option(BUILD_TESTS                             "Build test units"               ON)
     if(cmake_build_type_tolower STREQUAL "release")
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
     endif()

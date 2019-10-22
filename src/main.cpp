@@ -9,6 +9,8 @@ int main() {
 
     fmt::print( "gogo" );
 
+    fmt::print("something");
+
     // spdlog::info("Welcome to spdlog!");
     // spdlog::error("Some error message with arg: {}", 1);
 }
