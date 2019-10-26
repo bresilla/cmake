@@ -13,11 +13,9 @@ with import <nixpkgs> {}; rec {
                     lldb
                     ctags
                     cppcheck
+                    valgrind
                     kcov
                     xorg.libX11
-                    libGL
-                    libGLU
-                    freeglut
                   ];
     LD_LIBRARY_PATH="/run/opengl-driver/lib;${xorg.libX11}/lib/;${libGL}/lib/;${libGLU}/lib;${freeglut}/lib";
     TOOLSET="clang++-7.1";

@@ -14,7 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(PROJECT_NAME "cplate")
 project(${PROJECT_NAME})
 if((NOT PROJECT_NAME))
-  message(FATAL_ERROR "Project name must be specified!")
+    message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
 message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
 
@@ -43,10 +43,7 @@ set(LIBRARY_OUTPUT_PATH                        ${LIB_BUILD})
 
 ####### BUILD TYPE #######
 string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
-if(NOT cmake_build_type_tolower STREQUAL "debug" AND
-   NOT cmake_build_type_tolower STREQUAL "release" AND
-   NOT cmake_build_type_tolower STREQUAL "fastdebug" AND
-   NOT cmake_build_type_tolower STREQUAL "fastrelease")
+if(NOT cmake_build_type_tolower STREQUAL "debug" AND NOT cmake_build_type_tolower STREQUAL "release" AND NOT cmake_build_type_tolower STREQUAL "fastdebug" AND NOT cmake_build_type_tolower STREQUAL "fastrelease")
     message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, FastDebug, and FastRelease (case-insensitive).")
 endif()
 if(NOT CMAKE_BUILD_TYPE)
