@@ -16,6 +16,7 @@ with import <nixpkgs> {}; rec {
                     valgrind
                     kcov
                     xorg.libX11
+                    ncurses
                   ];
     LD_LIBRARY_PATH="/run/opengl-driver/lib;${xorg.libX11}/lib/;${libGL}/lib/;${libGLU}/lib;${freeglut}/lib";
     TOOLSET="clang++-7.1";

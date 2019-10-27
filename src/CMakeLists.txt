@@ -4,32 +4,6 @@ file(MAKE_DIRECTORY "${INCLUDE_BUILD}")
 
 
 ##############################################################################################################################################
-#                   THIRD PARTY PACKAGES
-##############################################################################################################################################
-#Use fmtlib for formatting
-add_subdirectory(${THRD_SRC}/fmt ${THRD_SRC}/fmt  EXCLUDE_FROM_ALL)
-target_set_warnings(fmt DISABLE ALL) # Treat fmtlib as a system include as to ignore the warnings
-set_target_properties(fmt PROPERTIES FOLDER "external")
-
-#Use spdlog for logging, and tell it to use our version of fmtlib
-add_subdirectory(${THRD_SRC}/spdlog ${THRD_SRC}/spdlog EXCLUDE_FROM_ALL)
-target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-
-#Doctest for unit tests
-# add_library(${THRD_SRC}/doctest INTERFACE)
-# target_include_directories(
-    # doctest
-    # INTERFACE
-    # doctest/doctest # note : will expose the parts/ folder...
-# )
-# include_directories(${DOCTEST_INCLUDE_DIR})
-# hunter_add_package(doctest)
-# find_package(doctest CONFIG REQUIRED)
-# target_link_libraries(... doctest::doctest)
-
-
-##############################################################################################################################################
 #                   EXTERNAL
 ##############################################################################################################################################
 # LET LD SEARCH HERE (avoid, better use find_library())
@@ -59,7 +33,6 @@ function (add_filelib FILE)
     add_library(${NAME} STATIC ${CODE})
     if(ENABLE_SANITIZERS)
         add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
-        # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND iwyu ${FILE})
         add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
     endif()
 endfunction(add_filelib)
@@ -94,7 +67,7 @@ if(BUILD_MAIN)
             classic
         PUBLIC
             fmt::fmt-header-only
-            # ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
+            ncurses${CMAKE_STATIC_LIBRARY_SUFFIX}
     )
 endif()
 ##############################################################################################################################################
@@ -139,6 +112,6 @@ endif()
 
 
 ###### INSTALL ######
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY "${LIB_BUILD}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY "${INCLUDE_BUILD}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+# install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+# install(DIRECTORY "${LIB_BUILD}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+# install(DIRECTORY "${INCLUDE_BUILD}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

@@ -76,6 +76,7 @@ elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower 
     endif()
 endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
+add_subdirectory(${PROJECT_SOURCE_DIR}/thrd EXCLUDE_FROM_ALL)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 
