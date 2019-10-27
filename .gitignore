@@ -5,4 +5,5 @@
 .cs_files
 .notifier
 /.undodir/
+/.clangd/
 .gdb_history
