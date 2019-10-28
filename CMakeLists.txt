@@ -131,63 +131,35 @@ file(GLOB UTIL_FILES "${UTL_SRC}/*.hpp")
 file(GLOB HEAD_FILES "${INC_SRC}/${PROJECT_NAME}/*.h" "${INC_SRC}/${PROJECT_NAME}/*.hpp")
 file(GLOB CODE_FILES "${SRC_SRC}/*.c" "${SRC_SRC}/*.cpp")
 
-#function to add internal libs
-function (add_sourcelib FILE)
-    get_filename_component(NAME ${FILE} NAME_WE)
-    get_filename_component(PATH ${FILE} DIRECTORY)
-    set(CODE ${PATH}/${NAME}.cpp)
-    add_library(${NAME} STATIC ${CODE})
+add_library(${PROJECT_NAME} ${UTIL_FILES} ${HEAD_FILES} ${CODE_FILES})
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+target_include_directories(${PROJECT_NAME} PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
+target_include_directories(${PROJECT_NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
+
+foreach(FILE ${CODE_FILES})
     if(ENABLE_SANITIZERS)
-        add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
-        add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
     endif()
-endfunction(add_sourcelib)
-#function to add header only internal libraries
-function (add_headerlib FILE )
-    get_filename_component(NAME ${FILE} NAME_WE)
-    get_filename_component(PATH ${FILE} DIRECTORY)
-    set(HEAD ${PATH}/${NAME}.hpp)
-    add_library(${NAME} INTERFACE)
-    target_include_directories(${FILE} SYSTEM INTERFACE inc/)
-endfunction(add_headerlib)
-
-# add_sourcelib(${SRC_SRC}/classic.cpp)
-# target_link_libraries(classic
-    # PRIVATE
-    # fmt
-# )
-# add_headerlib(${UTL_SRC}/utils.hpp)
-
-# foreach(A_FILE ${CODE_FILES})
-    # add_sourcelib(${A_FILE})
-    # foreach(B_FILE ${HEAD_FILES})
-        # add_headerlib(${B_FILE})
-    # endforeach()
-# endforeach()
-
-add_library(all_lib ${UTIL_FILES} ${HEAD_FILES} ${CODE_FILES})
-target_compile_features(all_lib PUBLIC cxx_std_11)
-target_include_directories(all_lib PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
-
-##### INCLUDE HEADERS
-# target_include_directories(HEAD_FILES PRIVATE inc SYSTEM INTERFACE inc)
-# target_include_directories(UTIL_FILES PRIVATE inc SYSTEM INTERFACE inc)
-# include_directories(${INC_SRC})
-# include_directories(${UTL_SRC})
-
+endforeach()
 
 ##############################################################################################################################################
 #                   EXECUTABLE
 ##############################################################################################################################################
-add_executable(${PROJECT_NAME} ${SRC_SRC}/${PROJECT_NAME}.cpp)
+add_executable(${PROJECT_NAME}_bin ${SRC_SRC}/main.cpp)
 
 if(BUILD_MAIN)
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_bin
     PRIVATE
-        all_lib
+        ${PROJECT_NAME}
     PUBLIC
         fmt::fmt-header-only
 )
+endif()
+
+if(ENABLE_SANITIZERS)
+    add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+    add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
 endif()
 
 
@@ -204,7 +176,7 @@ if(BUILD_TESTS)
         get_filename_component(NAME ${PATH} NAME_WE)
         set(NAME ${PROJECT_NAME}_${NAME})
         add_executable(${NAME} ${PATH})
-        target_link_libraries(${NAME} PRIVATE doctest classic)
+        target_link_libraries(${NAME} PRIVATE ${PROJECT_NAME})
         add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
         if(ENABLE_COVERAGE)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${SRC_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})

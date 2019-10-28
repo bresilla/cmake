@@ -1,7 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../src/inc/classic.h"
-#include "../src/sgl/utils.hpp"
-#include <doctest.h>
+#include <cplate/classic.h>
+#include <utils.hpp>
+#include <doctest.hpp>
 
 TEST_CASE( "testing the factorial function" ) {
     CHECK( utl::factorial( 1 ) == 1 );
