@@ -1,6 +1,6 @@
-[submodule "thrd/fmt"]
-	path = thrd/fmt
-	url = https://github.com/fmtlib/fmt.git
-[submodule "thrd/doctest"]
-	path = thrd/doctest
-	url = https://github.com/onqtam/doctest.git
+[submodule "external/doctest"]
+	path = external/doctest
+	url = https://github.com/onqtam/doctest
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt

@@ -1,4 +1,4 @@
-#include "classic.h"
+#include <cplate/classic.h>
 /// calculate volume of the square
 /// based on the input `a` and `b` and `c`
 void Object::setVolume( const int a, const int b, const int c ) {
