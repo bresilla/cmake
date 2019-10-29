@@ -22,7 +22,7 @@ message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
 ##############################################################################################################################################
 #               VARIABLES
 ##############################################################################################################################################
-set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple CMAKE and CXX template")
+set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple ${PROJECT_NAME} project")
 set(${CMAKE_PROJECT_NAME}_VENDOR_NAME           "bresilla")
 set(${CMAKE_PROJECT_NAME}_VENDOR_CONTACT        "trim.bresilla@gmail.com")
 set(${CMAKE_PROJECT_NAME}_VERSION_MAJOR         0)
@@ -106,6 +106,7 @@ set_target_properties(fmt PROPERTIES FOLDER "external")
 # file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
 set(EXTERN fmt)
+set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
 
 
 ##############################################################################################################################################
@@ -145,7 +146,7 @@ target_link_libraries(${PROJECT_NAME}
 
 foreach(FILE ${CODE_FILES})
     if(ENABLE_SANITIZERS)
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
     endif()
 endforeach()
@@ -154,6 +155,7 @@ endforeach()
 #                   EXECUTABLE
 ##############################################################################################################################################
 add_executable(${PROJECT_NAME}_bin ${SRC_SRC}/main.cpp)
+set_target_properties(${PROJECT_NAME}_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 if(BUILD_MAIN)
 target_link_libraries(${PROJECT_NAME}_bin
@@ -165,7 +167,7 @@ target_link_libraries(${PROJECT_NAME}_bin
 endif()
 
 if(ENABLE_SANITIZERS)
-    add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+    # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
     add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
 endif()
 
@@ -188,6 +190,11 @@ if(BUILD_TESTS)
         if(ENABLE_COVERAGE)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${SRC_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
         endif()
+        if(ENABLE_MEMCHECK)
+            find_program( MEMORYCHECK_COMMAND valgrind )
+            set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full" )
+            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${PROJECT_BINARY_DIR}/bin/${NAME})
+        endif()
     endfunction(add_testing)
     # find each test and apply testing
     file(GLOB TEST_FILES "test/*.c" "test/*.cpp")
@@ -198,18 +205,13 @@ if(BUILD_TESTS)
     endif()
 endif()
 
-###### CHECKING EXECUTABLE FOR MEMORY LEAK ######
-if(ENABLE_MEMCHECK)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${BIN_BUILD}/${PROJECT_NAME})
-endif()
-
 
 ##############################################################################################################################################
 #                   DOCUMENTATION
 ###############################################################################################################################################
 file(MAKE_DIRECTORY "${DOCS_BUILD}")
 if(ENABLE_DOCUMENT)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND standardese --output-format=html --input.blacklist_file=CMakeLists.txt ${SRC_SRC} WORKING_DIRECTORY ${DOCS_BUILD})
+    # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND standardese --output-format=html --input.blacklist_file=CMakeLists.txt ${SRC_SRC} WORKING_DIRECTORY ${DOCS_BUILD})
 endif()
 
 
