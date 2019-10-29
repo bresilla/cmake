@@ -11,7 +11,8 @@ HunterGate(
 ###### VERSION AND NAME ######
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(PROJECT_NAME "cplate")
+get_filename_component(NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
+set(PROJECT_NAME ${NAME})
 project(${PROJECT_NAME})
 if((NOT PROJECT_NAME))
     message(FATAL_ERROR "Project name must be specified!")
@@ -22,7 +23,7 @@ message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
 ##############################################################################################################################################
 #               VARIABLES
 ##############################################################################################################################################
-set(${CMAKE_PROJECT_NAME}_SUMMARY               "A simple ${PROJECT_NAME} project")
+set(${CMAKE_PROJECT_NAME}_SUMMARY               "The ${PROJECT_NAME} project")
 set(${CMAKE_PROJECT_NAME}_VENDOR_NAME           "bresilla")
 set(${CMAKE_PROJECT_NAME}_VENDOR_CONTACT        "trim.bresilla@gmail.com")
 set(${CMAKE_PROJECT_NAME}_VERSION_MAJOR         0)
@@ -100,11 +101,7 @@ add_subdirectory(${EXT_SRC}/fmt EXCLUDE_FROM_ALL)
 target_set_warnings(fmt DISABLE ALL) # Treat fmtlib as a system include as to ignore the warnings
 set_target_properties(fmt PROPERTIES FOLDER "external")
 
-#Use spdlog for logging, and tell it to use our version of fmtlib
-# add_subdirectory(${EXT_SRC}/spdlog ${EXT_SRC}/spdlog EXCLUDE_FROM_ALL)
-# target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
-# file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-
+#-------------
 set(EXTERN fmt)
 set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
 
@@ -115,16 +112,13 @@ set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
 # LET LD SEARCH HERE (avoid, better use find_library())
 # link_directories(/usr/lib)
 
-# EIGEN
-# find_package(Eigen3 REQUIRED)
-# if(Eigen3_FOUND)
-# message ("Eigen3 FOUND")
-# target_include_directories(${PROJECT_NAME} PRIVATE ${EIGEN3_INCLUDE_DIR})
-# NCURSES
 find_package(Curses REQUIRED)
 if(CURSES_FOUND)
     message ("CURSES_FOUND")
 endif()
+
+#-------------
+set(LOCEXT ncurses)
 
 
 ##############################################################################################################################################
@@ -142,6 +136,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE $
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         ${EXTERN}
+        ${LOCEXT}
 )
 
 foreach(FILE ${CODE_FILES})
@@ -150,6 +145,7 @@ foreach(FILE ${CODE_FILES})
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
     endif()
 endforeach()
+
 
 ##############################################################################################################################################
 #                   EXECUTABLE
@@ -163,6 +159,7 @@ target_link_libraries(${PROJECT_NAME}_bin
         ${PROJECT_NAME}
     PUBLIC
         ${EXTERN}
+        ${LOCEXT}
 )
 endif()
 
