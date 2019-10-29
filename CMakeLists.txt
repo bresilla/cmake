@@ -62,12 +62,17 @@ endif()
 #                 COMPILER
 ##############################################################################################################################################
 include(Warnings)
+#CPP STANDARD OPTIONS
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower STREQUAL "fastrelease"))
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     include(LTO)
     include(Packaging)
-    option(BUILD_MAIN                              "Build main function"            ON)
+    option(BUILD_MAIN                                  "Build main function"            ON)
     if(cmake_build_type_tolower STREQUAL "release")
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
     endif()
@@ -75,20 +80,16 @@ elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower 
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-    option(BUILD_MAIN                              "Build main function"            ON)
+    option(BUILD_MAIN                                  "Build main function"            ON)
     if(cmake_build_type_tolower STREQUAL "debug")
         option(BUILD_TESTS                             "Build test units"               ON)
         option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
         option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
-        # option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
+        option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
     endif()
 endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
-#CPP STANDARD OPTIONS
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 ##############################################################################################################################################
@@ -104,9 +105,11 @@ set_target_properties(fmt PROPERTIES FOLDER "external")
 # target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
 # file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
+set(EXTERN fmt)
+
 
 ##############################################################################################################################################
-#                   EXTERNAL
+#                   LOCAL
 ##############################################################################################################################################
 # LET LD SEARCH HERE (avoid, better use find_library())
 # link_directories(/usr/lib)
@@ -135,6 +138,10 @@ add_library(${PROJECT_NAME} ${UTIL_FILES} ${HEAD_FILES} ${CODE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
 target_include_directories(${PROJECT_NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+        ${EXTERN}
+)
 
 foreach(FILE ${CODE_FILES})
     if(ENABLE_SANITIZERS)
@@ -153,7 +160,7 @@ target_link_libraries(${PROJECT_NAME}_bin
     PRIVATE
         ${PROJECT_NAME}
     PUBLIC
-        fmt::fmt-header-only
+        ${EXTERN}
 )
 endif()
 
