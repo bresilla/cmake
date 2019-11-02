@@ -193,7 +193,6 @@ if(BUILD_TESTS)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${PROJECT_BINARY_DIR}/bin/${NAME})
         endif()
     endfunction(add_testing)
-    # find each test and apply testing
     file(GLOB TEST_FILES "test/*.c" "test/*.cpp")
     if(BUILD_TESTS)
         foreach(A_FILE ${TEST_FILES})
