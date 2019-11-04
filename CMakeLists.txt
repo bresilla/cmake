@@ -130,30 +130,35 @@ set(LOCEXT ncurses)
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   SOURCE
 # -------------------------------------------------------------------------------------------------------------------------------------------
-file(GLOB UTIL_FILES "${UTL_SRC}/*.h" "${UTL_SRC}/*.hpp")
+add_library(UTILS INTERFACE)
+target_include_directories(UTILS INTERFACE ${UTL_SRC}/)
 
-file(GLOB HEAD_FILES "${INC_SRC}/${PROJECT_NAME}/*.h" "${INC_SRC}/${PROJECT_NAME}/*.hpp")
-file(GLOB CODE_FILES "${SRC_SRC}/${PROJECT_NAME}/*.c" "${SRC_SRC}/${PROJECT_NAME}/*.cpp")
-list(REMOVE_ITEM CODE_FILES ${SRC_SRC}/main.cpp)
+function (add_source_lib NAME)
+    file(GLOB HEAD_FILES "${INC_SRC}/${NAME}/*.h" "${INC_SRC}/${NAME}/*.hpp")
+    file(GLOB CODE_FILES "${SRC_SRC}/${NAME}/*.c" "${SRC_SRC}/${NAME}/*.cpp")
+    add_library(${NAME} ${HEAD_FILES} ${CODE_FILES})
+    target_include_directories(${NAME} PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
+    target_include_directories(${NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
+    target_link_libraries(${NAME}
+        PRIVATE
+            ${UTILS}
+            ${EXTERN}
+            ${LOCEXT}
+    )
+    foreach(FILE ${CODE_FILES})
+        if(ENABLE_SANITIZERS)
+            # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+            add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
+        endif()
+    endforeach()
+endfunction(add_source_lib)
 
-add_library(${PROJECT_NAME} ${UTIL_FILES} ${HEAD_FILES} ${CODE_FILES})
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
-target_include_directories(${PROJECT_NAME} PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
-target_include_directories(${PROJECT_NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
+file(GLOB LIBRARIES RELATIVE ${SRC_SRC} "${SRC_SRC}/*")
+list(REMOVE_ITEM LIBRARIES main.cpp)
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-        ${EXTERN}
-        ${LOCEXT}
-)
-
-foreach(FILE ${CODE_FILES})
-    if(ENABLE_SANITIZERS)
-        # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
-    endif()
-endforeach()
-
+FOREACH(LIB ${LIBRARIES})
+    add_source_lib(${LIB})
+ENDFOREACH()
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -165,8 +170,9 @@ if(BUILD_MAIN)
 
     target_link_libraries(${PROJECT_NAME}_bin
         PUBLIC
-            ${PROJECT_NAME}
+            ${LIBRARIES}
         PRIVATE
+            ${UTILS}
             ${EXTERN}
             ${LOCEXT}
     )
@@ -192,7 +198,7 @@ if(BUILD_TESTS)
         get_filename_component(NAME ${PATH} NAME_WE)
         set(NAME ${PROJECT_NAME}_${NAME})
         add_executable(${NAME} ${PATH})
-        target_link_libraries(${NAME} ${PROJECT_NAME})
+        target_link_libraries(${NAME} ${UTILS} ${LIBRARIES})
         add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
         if(ENABLE_COVERAGE)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${SRC_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
