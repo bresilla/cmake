@@ -5,8 +5,7 @@
 include("cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
-    SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358"
-)
+    SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358" )
 
 # VERSION AND NAME
 cmake_minimum_required(VERSION 3.10)
@@ -18,6 +17,7 @@ if((NOT PROJECT_NAME))
     message(FATAL_ERROR "Project name must be specified!")
 endif ((NOT PROJECT_NAME))
 message ("\nPROJECT: ${CMAKE_PROJECT_NAME}")
+
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ set(EXECUTABLE_OUTPUT_PATH                     ${BIN_BUILD})
 set(LIBRARY_OUTPUT_PATH                        ${LIB_BUILD})
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 BUILD
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,9 +55,11 @@ string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
 if(NOT cmake_build_type_tolower STREQUAL "debug" AND NOT cmake_build_type_tolower STREQUAL "release" AND NOT cmake_build_type_tolower STREQUAL "fastdebug" AND NOT cmake_build_type_tolower STREQUAL "fastrelease")
     message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, FastDebug, and FastRelease (case-insensitive).")
 endif()
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
+
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -93,6 +96,7 @@ endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   EXTERNAL
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,6 +108,7 @@ set_target_properties(fmt PROPERTIES FOLDER "external")
 #grouping external libraries
 set(EXTERN fmt)
 set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
+
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -121,6 +126,7 @@ endif()
 set(LOCEXT ncurses)
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   SOURCE
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -128,13 +134,15 @@ file(GLOB UTIL_FILES "${UTL_SRC}/*.h" "${UTL_SRC}/*.hpp")
 
 file(GLOB HEAD_FILES "${INC_SRC}/${PROJECT_NAME}/*.h" "${INC_SRC}/${PROJECT_NAME}/*.hpp")
 file(GLOB CODE_FILES "${SRC_SRC}/*.c" "${SRC_SRC}/*.cpp")
+list(REMOVE_ITEM CODE_FILES ${SRC_SRC}/main.cpp)
 
 add_library(${PROJECT_NAME} ${UTIL_FILES} ${HEAD_FILES} ${CODE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 target_include_directories(${PROJECT_NAME} PRIVATE ${INC_SRC} SYSTEM INTERFACE ${INC_SRC})
 target_include_directories(${PROJECT_NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
+
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC
+    PRIVATE
         ${EXTERN}
         ${LOCEXT}
 )
@@ -147,26 +155,28 @@ foreach(FILE ${CODE_FILES})
 endforeach()
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   EXECUTABLE
 # -------------------------------------------------------------------------------------------------------------------------------------------
-add_executable(${PROJECT_NAME}_bin ${SRC_SRC}/main.cpp)
-set_target_properties(${PROJECT_NAME}_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-
 if(BUILD_MAIN)
-target_link_libraries(${PROJECT_NAME}_bin
-    PRIVATE
-        ${PROJECT_NAME}
-    PUBLIC
-        ${EXTERN}
-        ${LOCEXT}
-)
+    add_executable(${PROJECT_NAME}_bin ${SRC_SRC}/main.cpp)
+    set_target_properties(${PROJECT_NAME}_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
+    target_link_libraries(${PROJECT_NAME}_bin
+        PUBLIC
+            ${PROJECT_NAME}
+        PRIVATE
+            ${EXTERN}
+            ${LOCEXT}
+    )
+
+    if(ENABLE_SANITIZERS)
+        # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
+    endif()
 endif()
 
-if(ENABLE_SANITIZERS)
-    # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
-    add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
-endif()
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -177,7 +187,7 @@ if(BUILD_TESTS)
     enable_testing()
     set(BUILD_TESTING_BCKP ${BUILD_TESTING})
     set(BUILD_TESTING OFF CACHE BOOL "Force disable of tests for external dependencies" FORCE)
-    # function to automatically set up testing for specific file
+
     function (add_testing PATH)
         get_filename_component(NAME ${PATH} NAME_WE)
         set(NAME ${PROJECT_NAME}_${NAME})
@@ -193,6 +203,7 @@ if(BUILD_TESTS)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND valgrind --leak-check=yes ${PROJECT_BINARY_DIR}/bin/${NAME})
         endif()
     endfunction(add_testing)
+
     file(GLOB TEST_FILES "test/*.c" "test/*.cpp")
     if(BUILD_TESTS)
         foreach(A_FILE ${TEST_FILES})
@@ -200,6 +211,7 @@ if(BUILD_TESTS)
         endforeach()
     endif()
 endif()
+
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,9 +223,39 @@ if(ENABLE_DOCUMENT)
 endif()
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   INSTALLATION
 # -------------------------------------------------------------------------------------------------------------------------------------------
-# install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-# install(DIRECTORY "${LIB_BUILD}/" DESTINATION ${CMAKE_INSTALL_LIBDIR})
-# install(DIRECTORY "${INCLUDE_BUILD}/" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+include(GNUInstallDirs)
+# Install files.
+
+if(BUILD_MAIN)
+    install(TARGETS ${PROJECT_NAME}_bin DESTINATION /usr/local/bin)
+endif()
+install(TARGETS ${PROJECT_NAME} DESTINATION /usr/local/lib)
+install(DIRECTORY "${INC_SRC}/" DESTINATION /usr/local/include)
+# Uninstall files.
+if(NOT TARGET uninstall)
+    configure_file(
+        "${CMAKE_MODULE_PATH}/Uninstall.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake"
+        IMMEDIATE @ONLY)
+    add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake)
+endif()
+
+# Set up packager.
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${${CMAKE_PROJECT_NAME}_SUMMARY}")
+set(CPACK_PACKAGE_VENDOR              "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
+set(CPACK_PACKAGE_DESCRIPTION_FILE    "${PROJECT_PATH}/README")
+set(CPACK_RESOURCE_FILE_LICENSE       "${PROJECT_PATH}/LICENSE")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${${CMAKE_PROJECT_NAME}_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${${CMAKE_PROJECT_NAME}_VERSION_PATCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CMAKE_PROJECT_NAME}")
+
+SET(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+set(CPACK_GENERATOR "DEB")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
+include(CPack)
