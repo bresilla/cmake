@@ -29,6 +29,8 @@ set(${CMAKE_PROJECT_NAME}_VENDOR_CONTACT        "trim.bresilla@gmail.com")
 set(${CMAKE_PROJECT_NAME}_VERSION_MAJOR         0)
 set(${CMAKE_PROJECT_NAME}_VERSION_MINOR         1)
 set(${CMAKE_PROJECT_NAME}_VERSION_PATCH         0)
+set(BUILD_EXECUTABLE                           "ON")
+option(BUILD_MAIN      "Build main function"    ON)
 set(PROJECT_VERSION                             "${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}.${${CMAKE_PROJECT_NAME}_VERSION_MINOR}.${${CMAKE_PROJECT_NAME}_VERSION_PATCH}")
 set(CMAKE_MODULE_PATH                          "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(PROJECT_PATH                               "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -47,7 +49,6 @@ set(EXECUTABLE_OUTPUT_PATH                     ${BIN_BUILD})
 set(LIBRARY_OUTPUT_PATH                        ${LIB_BUILD})
 
 
-
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 BUILD
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -60,6 +61,12 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+find_program(CCACHE_BIN ccache)
+if(CCACHE_BIN)
+    message("CCACHE_BIN")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_BIN})
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE_BIN})
+endif(CCACHE_BIN)
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,7 +83,6 @@ if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower ST
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
     include(LTO)
     include(Packaging)
-    option(BUILD_MAIN                                  "Build main function"            ON)
     if(cmake_build_type_tolower STREQUAL "release")
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
     endif()
@@ -84,10 +90,9 @@ elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower 
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
     set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-    option(BUILD_MAIN                                  "Build main function"            ON)
+    option(BUILD_TESTS                             "Build test units"               ON)
+    option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
     if(cmake_build_type_tolower STREQUAL "debug")
-        option(BUILD_TESTS                             "Build test units"               ON)
-        option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
         option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
         option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
         option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
@@ -103,11 +108,13 @@ message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
 #Use fmtlib for formatting
 add_subdirectory(${EXT_SRC}/fmt EXCLUDE_FROM_ALL)
 target_set_warnings(fmt DISABLE ALL) # Treat fmtlib as a system include as to ignore the warnings
-set_target_properties(fmt PROPERTIES FOLDER "external")
 
-#grouping external libraries
-set(EXTERN fmt)
-set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
+set(EXTLIB fmt)
+foreach(EXT ${EXTLIB})
+    message("external library ${EXT} added")
+    set_target_properties(${EXT} PROPERTIES FOLDER "external")
+    set_target_properties(${EXT} PROPERTIES COMPILE_OPTIONS "-O2")
+endforeach()
 
 
 
@@ -118,12 +125,16 @@ set_target_properties(${EXTERN} PROPERTIES COMPILE_OPTIONS "-O2")
 # link_directories(/usr/lib)
 
 find_package(Curses REQUIRED)
-if(CURSES_FOUND)
-    message ("CURSES_FOUND")
+if(NOT CURSES_FOUND)
+    message ("CURSES_NOT_FOUND")
 endif()
 
 #grouping local libraries
-set(LOCEXT ncurses)
+set(SYSLIB ncurses)
+foreach(LOC ${SYSLIB})
+    message("system library ${LOC} added")
+endforeach()
+
 
 
 
@@ -142,8 +153,8 @@ function (add_source_lib NAME)
     target_link_libraries(${NAME}
         PRIVATE
             ${UTILS}
-            ${EXTERN}
-            ${LOCEXT}
+            ${EXTLIB}
+            ${SYSLIB}
     )
     foreach(FILE ${CODE_FILES})
         if(ENABLE_SANITIZERS)
@@ -156,9 +167,10 @@ endfunction(add_source_lib)
 file(GLOB LIBRARIES RELATIVE ${SRC_SRC} "${SRC_SRC}/*")
 list(REMOVE_ITEM LIBRARIES main.cpp)
 
-FOREACH(LIB ${LIBRARIES})
+foreach(LIB ${LIBRARIES})
     add_source_lib(${LIB})
-ENDFOREACH()
+    message("local library ${LIB} added")
+endforeach()
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,8 +185,8 @@ if(BUILD_MAIN)
             ${LIBRARIES}
         PRIVATE
             ${UTILS}
-            ${EXTERN}
-            ${LOCEXT}
+            ${EXTLIB}
+            ${SYSLIB}
     )
 
     if(ENABLE_SANITIZERS)
@@ -233,13 +245,13 @@ endif()
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                   INSTALLATION
 # -------------------------------------------------------------------------------------------------------------------------------------------
-include(GNUInstallDirs)
 # Install files.
-
 if(BUILD_MAIN)
     install(TARGETS ${PROJECT_NAME}_bin DESTINATION /usr/local/bin)
 endif()
-install(TARGETS ${PROJECT_NAME} DESTINATION /usr/local/lib)
+foreach(LIB ${LIBRARIES})
+    install(TARGETS ${LIB} DESTINATION /usr/local/lib)
+endforeach()
 install(DIRECTORY "${INC_SRC}/" DESTINATION /usr/local/include)
 # Uninstall files.
 if(NOT TARGET uninstall)
@@ -251,17 +263,25 @@ if(NOT TARGET uninstall)
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Uninstall.cmake)
 endif()
 
-# Set up packager.
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${${CMAKE_PROJECT_NAME}_SUMMARY}")
-set(CPACK_PACKAGE_VENDOR              "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
-set(CPACK_PACKAGE_DESCRIPTION_FILE    "${PROJECT_PATH}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE       "${PROJECT_PATH}/LICENSE.md")
-set(CPACK_PACKAGE_VERSION_MAJOR       "${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR       "${${CMAKE_PROJECT_NAME}_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH       "${${CMAKE_PROJECT_NAME}_VERSION_PATCH}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CMAKE_PROJECT_NAME}")
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------
+#                   PACKAGING
+# -------------------------------------------------------------------------------------------------------------------------------------------
+set(CPACK_PACKAGE_VENDOR                "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
+set(CPACK_PACKAGE_CONTACT               "${${CMAKE_PROJECT_NAME}_VENDOR_CONTACT}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${${CMAKE_PROJECT_NAME}_SUMMARY}")
+set(CPACK_PACKAGE_DESCRIPTION_FILE      "${PROJECT_PATH}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE         "${PROJECT_PATH}/LICENSE.md")
+set(CPACK_PACKAGE_VERSION_MAJOR         "${${CMAKE_PROJECT_NAME}_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR         "${${CMAKE_PROJECT_NAME}_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH         "${${CMAKE_PROJECT_NAME}_VERSION_PATCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY     "${CMAKE_PROJECT_NAME}")
 
 SET(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER     "${${CMAKE_PROJECT_NAME}_VENDOR_NAME}")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS        "ncurses")
+# set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/Debian/postinst")
+
 include(CPack)
