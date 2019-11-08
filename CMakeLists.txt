@@ -158,7 +158,7 @@ function (add_source_lib NAME)
     )
     foreach(FILE ${CODE_FILES})
         if(ENABLE_SANITIZERS)
-            # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+            # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE})
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
         endif()
     endforeach()
@@ -184,13 +184,14 @@ if(BUILD_MAIN)
         PUBLIC
             ${LIBRARIES}
         PRIVATE
-            ${UTILS}
             ${EXTLIB}
             ${SYSLIB}
+        SYSTEM INTERFACE
+            ${UTILS}
     )
 
     if(ENABLE_SANITIZERS)
-        # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp)
         add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
     endif()
 endif()
@@ -210,7 +211,8 @@ if(BUILD_TESTS)
         get_filename_component(NAME ${PATH} NAME_WE)
         set(NAME ${PROJECT_NAME}_${NAME})
         add_executable(${NAME} ${PATH})
-        target_link_libraries(${NAME} ${UTILS} ${LIBRARIES})
+        target_link_libraries(${NAME} ${LIBRARIES})
+        target_include_directories(${NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
         add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
         if(ENABLE_COVERAGE)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${SRC_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
