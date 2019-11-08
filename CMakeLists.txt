@@ -103,23 +103,23 @@ message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-#                   EXTERNAL
+#                   EXTERNAL LIB
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #Use fmtlib for formatting
 add_subdirectory(${EXT_SRC}/fmt EXCLUDE_FROM_ALL)
 target_set_warnings(fmt DISABLE ALL) # Treat fmtlib as a system include as to ignore the warnings
+set_target_properties(fmt PROPERTIES FOLDER "external")
+set_target_properties(fmt PROPERTIES COMPILE_OPTIONS "-O2")
 
 set(EXTLIB fmt)
 foreach(EXT ${EXTLIB})
     message("external library ${EXT} added")
-    set_target_properties(${EXT} PROPERTIES FOLDER "external")
-    set_target_properties(${EXT} PROPERTIES COMPILE_OPTIONS "-O2")
 endforeach()
 
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-#                   LOCAL
+#                   SYSTEM LIB
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # LET LD SEARCH HERE (avoid, better use find_library())
 # link_directories(/usr/lib)
@@ -139,7 +139,7 @@ endforeach()
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-#                   SOURCE
+#                   LOCAL LIB
 # -------------------------------------------------------------------------------------------------------------------------------------------
 add_library(UTILS INTERFACE)
 target_include_directories(UTILS INTERFACE ${UTL_SRC}/)
@@ -158,15 +158,13 @@ function (add_source_lib NAME)
     )
     foreach(FILE ${CODE_FILES})
         if(ENABLE_SANITIZERS)
-            # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE} -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+            # add_custom_command(TARGET ${NAME} POST_BUILD COMMAND clang-tidy ${FILE})
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND cppcheck --enable=all ${FILE})
         endif()
     endforeach()
 endfunction(add_source_lib)
 
-file(GLOB LIBRARIES RELATIVE ${SRC_SRC} "${SRC_SRC}/*")
-list(REMOVE_ITEM LIBRARIES main.cpp)
-
+set(LIBRARIES cplate second)
 foreach(LIB ${LIBRARIES})
     add_source_lib(${LIB})
     message("local library ${LIB} added")
@@ -184,13 +182,13 @@ if(BUILD_MAIN)
         PUBLIC
             ${LIBRARIES}
         PRIVATE
-            ${UTILS}
             ${EXTLIB}
             ${SYSLIB}
     )
+    target_include_directories(${PROJECT_NAME}_bin PRIVATE ${UTL_SRC} INTERFACE ${UTL_SRC})
 
     if(ENABLE_SANITIZERS)
-        # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp -checks=*,-clang-diagnostic-unused-command-line-argument -header-filter=.*)
+        # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp)
         add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
     endif()
 endif()
@@ -210,7 +208,8 @@ if(BUILD_TESTS)
         get_filename_component(NAME ${PATH} NAME_WE)
         set(NAME ${PROJECT_NAME}_${NAME})
         add_executable(${NAME} ${PATH})
-        target_link_libraries(${NAME} ${UTILS} ${LIBRARIES})
+        target_link_libraries(${NAME} ${LIBRARIES})
+        target_include_directories(${NAME} PRIVATE ${UTL_SRC} INTERFACE ${UTL_SRC})
         add_test(NAME ${NAME} COMMAND ${EXECUTABLE_OUTPUT_PATH}/${NAME})
         if(ENABLE_COVERAGE)
             add_custom_command(TARGET ${NAME} POST_BUILD COMMAND kcov --include-pattern=${SRC_SRC} ${PROJECT_BINARY_DIR}/cover ${PROJECT_BINARY_DIR}/bin/${NAME})
