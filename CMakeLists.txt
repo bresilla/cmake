@@ -184,7 +184,7 @@ if(BUILD_MAIN)
         PRIVATE
             ${EXTLIB}
             ${SYSLIB}
-        SYSTEM INTERFACE
+        INTERFACE
             ${UTILS}
     )
     target_include_directories(${PROJECT_NAME}_bin PRIVATE ${UTL_SRC} INTERFACE ${UTL_SRC})
