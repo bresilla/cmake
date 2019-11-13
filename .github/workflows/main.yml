@@ -1,0 +1,22 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: packges
+      run: sudo apt install -y g++7 kcov cppcheck iwyu valgrind clang-tidy libclang-dev libboost-all-dev
+    - name: cmake
+      run: cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=FastDebug
+    - name: make
+      run: cmake --build build/ --target
+    - name: test
+      run: cd build && ctest
