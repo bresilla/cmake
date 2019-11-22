@@ -49,6 +49,7 @@ set(EXECUTABLE_OUTPUT_PATH                     ${BIN_BUILD})
 set(LIBRARY_OUTPUT_PATH                        ${LIB_BUILD})
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 BUILD
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,6 +70,7 @@ if(CCACHE_BIN)
 endif(CCACHE_BIN)
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 COMPILER
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,7 +80,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
-                    -Wall -Wno-unknown-pragmas \
+                    -Wall \
+                    -Wno-unknown-pragmas \
                     -Wno-sign-compare \
                     -Woverloaded-virtual \
                     -Wwrite-strings \
@@ -89,16 +92,16 @@ if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower ST
     include(LTO)
     include(Packaging)
     if(cmake_build_type_tolower STREQUAL "release")
-        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
+        option(ENABLE_DOCUMENT         "Enable documentation"           ON)
     endif()
 elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower STREQUAL "fastdebug"))
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage -O0 -g3")
-    option(BUILD_TESTS                             "Build test units"               ON)
-    option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
+    option(BUILD_TESTS             "Build test units"                   ON)
+    option(ENABLE_COVERAGE         "Enable testing coverage"            ON)
     if(cmake_build_type_tolower STREQUAL "debug")
-        option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
-        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
-        option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
+        option(ENABLE_SANITIZERS       "Enable langtidy and cppcheck"   ON)
+        option(ENABLE_DOCUMENT         "Enable documentation"           ON)
+        option(ENABLE_MEMCHECK         "Enable memory leak check"       ON)
     endif()
 endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
@@ -135,7 +138,7 @@ endforeach()
 link_directories(${DEFLIB})
 
 
-# FIND-PACKAGES
+# FIND-PACKAGES and HUNTER
 find_package(Curses REQUIRED)
 if(NOT CURSES_FOUND)
     message ("CURSES_NOT_FOUND")

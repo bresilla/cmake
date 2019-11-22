@@ -13,7 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: packges
-      run: sudo apt install -y g++7 kcov cppcheck iwyu valgrind clang-tidy libclang-dev libboost-all-dev
+      run: sudo apt install -y g++7 cppcheck iwyu valgrind clang-tidy libclang-dev libboost-all-dev
+    - name: kcov
+      run: wget https://github.com/SimonKagstrom/kcov/archive/v36.tar.gz && tar xzf v36.tar.gz && cd kcov-36 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/.kcov -DCMAKE_BUILD_TYPE=Release && make -j2 &&  make install
     - name: cmake
       run: cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=FastDebug
     - name: make
