@@ -49,6 +49,7 @@ set(EXECUTABLE_OUTPUT_PATH                     ${BIN_BUILD})
 set(LIBRARY_OUTPUT_PATH                        ${LIB_BUILD})
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 BUILD
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,6 +70,7 @@ if(CCACHE_BIN)
 endif(CCACHE_BIN)
 
 
+
 # -------------------------------------------------------------------------------------------------------------------------------------------
 #                 COMPILER
 # -------------------------------------------------------------------------------------------------------------------------------------------
@@ -77,28 +79,76 @@ include(Warnings)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+                    -Wall \
+                    -Wno-unknown-pragmas \
+                    -Wno-sign-compare \
+                    -Woverloaded-virtual \
+                    -Wwrite-strings \
+                    -Wno-unused")
 
 if((cmake_build_type_tolower STREQUAL "release") OR (cmake_build_type_tolower STREQUAL "fastrelease"))
-    set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
     include(LTO)
     include(Packaging)
     if(cmake_build_type_tolower STREQUAL "release")
-        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
+        option(ENABLE_DOCUMENT         "Enable documentation"           ON)
     endif()
 elseif((cmake_build_type_tolower STREQUAL "debug") OR (cmake_build_type_tolower STREQUAL "fastdebug"))
-    set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-sign-compare -Woverloaded-virtual -Wwrite-strings -Wno-unused")
-    set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
-    set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3")
-    option(BUILD_TESTS                             "Build test units"               ON)
-    option(ENABLE_COVERAGE                         "Enable testing coverage"        ON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage -O0 -g3")
+    option(BUILD_TESTS             "Build test units"                   ON)
+    option(ENABLE_COVERAGE         "Enable testing coverage"            ON)
     if(cmake_build_type_tolower STREQUAL "debug")
-        option(ENABLE_SANITIZERS                       "Enable langtidy and cppcheck"   ON)
-        option(ENABLE_DOCUMENT                         "Enable documentation"           ON)
-        option(ENABLE_MEMCHECK                         "Enable memory leak check"       ON)
+        option(ENABLE_SANITIZERS       "Enable langtidy and cppcheck"   ON)
+        option(ENABLE_DOCUMENT         "Enable documentation"           ON)
+        option(ENABLE_MEMCHECK         "Enable memory leak check"       ON)
     endif()
 endif()
 message ("BUILD TYPE: ${CMAKE_BUILD_TYPE}\n")
+
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------
+#                   SYSTEM LIB
+# -------------------------------------------------------------------------------------------------------------------------------------------
+#environment CPLUS_INCLUDE_PATH and default headers /usr/include
+if (NOT $ENV{CPLUS_INCLUDE_PATH}  STREQUAL "")
+    string (REPLACE ":" " " SYS_INCLUDES $ENV{CPLUS_INCLUDE_PATH})
+    string (REPLACE "//" "/" SYS_INCLUDES ${SYS_INCLUDES})
+    string(REGEX MATCHALL "[^ ]+" DEFINC ${SYS_INCLUDES})
+endif (NOT $ENV{CPLUS_INCLUDE_PATH}  STREQUAL "")
+list(APPEND DEFINC "/usr/include")
+list(REMOVE_DUPLICATES DEFINC)
+foreach(LOC ${DEFINC})
+    message("directory ${LOC} included")
+endforeach()
+include_directories(SYSTEM ${DEFINC})
+
+#environment LD_LIBRARY_PATH and default linker /usr/lib/
+if (NOT $ENV{LD_LIBRARY_PATH}  STREQUAL "")
+    string (REPLACE ";" " " SYS_LIBRARIES $ENV{LD_LIBRARY_PATH})
+    string (REPLACE "//" "/" SYS_LIBRARIES ${SYS_LIBRARIES})
+    string(REGEX MATCHALL "[^ ]+" DEFLIB ${SYS_LIBRARIES})
+endif (NOT $ENV{LD_LIBRARY_PATH}  STREQUAL "")
+list(APPEND DEFLIB "/usr/lib")
+list(REMOVE_DUPLICATES DEFLIB)
+foreach(LOC ${DEFLIB})
+    message("directory ${LOC} linked")
+endforeach()
+link_directories(${DEFLIB})
+
+
+# FIND-PACKAGES and HUNTER
+find_package(Curses REQUIRED)
+if(NOT CURSES_FOUND)
+    message ("CURSES_NOT_FOUND")
+endif()
+
+#grouping local libraries
+set(SYSLIB ncurses)
+foreach(LOC ${SYSLIB})
+    message("system library ${LOC} added")
+endforeach()
 
 
 
@@ -119,26 +169,6 @@ endforeach()
 
 
 # -------------------------------------------------------------------------------------------------------------------------------------------
-#                   SYSTEM LIB
-# -------------------------------------------------------------------------------------------------------------------------------------------
-# LET LD SEARCH HERE (avoid, better use find_library())
-# link_directories(/usr/lib)
-
-find_package(Curses REQUIRED)
-if(NOT CURSES_FOUND)
-    message ("CURSES_NOT_FOUND")
-endif()
-
-#grouping local libraries
-set(SYSLIB ncurses)
-foreach(LOC ${SYSLIB})
-    message("system library ${LOC} added")
-endforeach()
-
-
-
-
-# -------------------------------------------------------------------------------------------------------------------------------------------
 #                   LOCAL LIB
 # -------------------------------------------------------------------------------------------------------------------------------------------
 add_library(UTILS INTERFACE)
@@ -152,7 +182,6 @@ function (add_source_lib NAME)
     target_include_directories(${NAME} PRIVATE ${UTL_SRC} SYSTEM INTERFACE ${UTL_SRC})
     target_link_libraries(${NAME}
         PRIVATE
-            ${UTILS}
             ${EXTLIB}
             ${SYSLIB}
     )
@@ -165,6 +194,7 @@ function (add_source_lib NAME)
 endfunction(add_source_lib)
 
 set(LIBRARIES cplate second)
+
 foreach(LIB ${LIBRARIES})
     add_source_lib(${LIB})
     message("local library ${LIB} added")
@@ -177,18 +207,14 @@ endforeach()
 if(BUILD_MAIN)
     add_executable(${PROJECT_NAME}_bin ${SRC_SRC}/main.cpp)
     set_target_properties(${PROJECT_NAME}_bin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-
+    target_include_directories(${PROJECT_NAME}_bin PRIVATE ${UTL_SRC} INTERFACE ${UTL_SRC})
     target_link_libraries(${PROJECT_NAME}_bin
         PUBLIC
             ${LIBRARIES}
         PRIVATE
             ${EXTLIB}
             ${SYSLIB}
-        INTERFACE
-            ${UTILS}
     )
-    target_include_directories(${PROJECT_NAME}_bin PRIVATE ${UTL_SRC} INTERFACE ${UTL_SRC})
-
     if(ENABLE_SANITIZERS)
         # add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND clang-tidy ${SRC_SRC}/main.cpp)
         add_custom_command(TARGET ${PROJECT_NAME}_bin POST_BUILD COMMAND cppcheck --enable=all ${SRC_SRC}/main.cpp)
